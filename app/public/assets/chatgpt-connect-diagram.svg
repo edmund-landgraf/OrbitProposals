@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 996" role="img" aria-labelledby="title desc">
+  <title id="title">Four steps to connect ChatGPT to Unwhelm</title>
+  <desc id="desc">A numbered diagram for connecting Connect ChatGPT to Unwhelm.</desc>
+  <defs>
+    <marker id="step-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#006b75"/>
+    </marker>
+  </defs>
+  <rect width="800" height="996" fill="#fffdf6"/>
+  <text x="400" y="48" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="22" font-weight="700" fill="#0c1116">Connect ChatGPT to Unwhelm</text>
+  <text x="400" y="76" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#3d4a4b">Four steps, from Plugins to a working chat</text>
+  <rect x="48" y="108" width="704" height="162" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="189.0" r="32" fill="#006b75"/>
+  <text x="108" y="199.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">1</text>
+  <text x="168" y="152" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Add a custom MCP server</text>
+  <text x="168" y="188" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">In ChatGPT on the web, go to Plugins,</text>
+  <text x="168" y="214" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">select the plus button, then Add custom MCP server.</text>
+  <text x="168" y="240" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Enter a name, such as Unwhelm.</text>
+  <line x1="400" y1="274" x2="400" y2="308" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+  <rect x="48" y="318" width="704" height="188" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="412.0" r="32" fill="#006b75"/>
+  <text x="108" y="422.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">2</text>
+  <text x="168" y="362" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Enter the server URL</text>
+  <text x="168" y="398" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Under Connection, enter the public HTTPS</text>
+  <text x="168" y="424" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">MCP endpoint. You never paste a password</text>
+  <text x="168" y="450" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">into ChatGPT.</text>
+  <text x="168" y="476" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="16" fill="#006b75">https://mcp.unwhelm.net/mcp</text>
+  <line x1="400" y1="510" x2="400" y2="544" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+  <rect x="48" y="554" width="704" height="162" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="635.0" r="32" fill="#006b75"/>
+  <text x="108" y="645.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">3</text>
+  <text x="168" y="598" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Configure auth and approve access</text>
+  <text x="168" y="634" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Choose OAuth when asked, review the risk</text>
+  <text x="168" y="660" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">warning, then create the plugin.</text>
+  <text x="168" y="686" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Sign in with Unwhelm’s email link and choose Allow.</text>
+  <line x1="400" y1="720" x2="400" y2="754" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+  <rect x="48" y="764" width="704" height="162" rx="14" fill="#dff2ef" stroke="#006b75" stroke-width="2"/>
+  <circle cx="108" cy="845.0" r="32" fill="#0c1116"/>
+  <text x="108" y="855.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">4</text>
+  <text x="168" y="808" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Install and use it in chat</text>
+  <text x="168" y="844" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Install the plugin, start a new conversation,</text>
+  <text x="168" y="870" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">type @ in the prompt box, and select Unwhelm.</text>
+  <text x="168" y="896" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Then ask ChatGPT to list your proposals.</text>
+  <text x="400" y="964" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#3d4a4b">Anyone can browse the catalog and draft. Saving and submitting need a signed-in account.</text>
+</svg>

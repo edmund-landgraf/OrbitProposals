@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">.NET Core API integration</title>
+  <desc id="desc">Technical walkthrough poster showing API contracts, authentication, and enterprise integration.</desc>
+  <defs><pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" fill="none" stroke="#29404a" stroke-width="1" opacity=".5"/></pattern></defs>
+  <rect width="1200" height="675" fill="#101820"/><rect width="1200" height="675" fill="url(#grid)"/>
+  <circle cx="1020" cy="150" r="165" fill="#b34f27" opacity=".48"/><circle cx="1050" cy="160" r="70" fill="#006b75" opacity=".82"/>
+  <rect x="86" y="78" width="1028" height="520" rx="16" fill="none" stroke="#d8cbb9" stroke-width="2" opacity=".8"/>
+  <text x="130" y="145" fill="#9ee7de" font-family="monospace" font-size="20" font-weight="700" letter-spacing="4">UNWHELMNET / PROOF</text>
+  <text x="130" y="255" fill="#fffdf6" font-family="Arial, sans-serif" font-size="58" font-weight="700">.NET Core API</text>
+  <text x="130" y="320" fill="#fffdf6" font-family="Arial, sans-serif" font-size="58" font-weight="700">integration</text>
+  <text x="130" y="385" fill="#c8d3d2" font-family="Arial, sans-serif" font-size="26">REST services, authentication, databases, and enterprise patterns.</text>
+  <g fill="none" stroke="#f7d276" stroke-width="3"><path d="M140 480h90M270 480h90M400 480h90"/><circle cx="140" cy="480" r="10" fill="#f7d276"/><circle cx="490" cy="480" r="10" fill="#f7d276"/></g>
+</svg>

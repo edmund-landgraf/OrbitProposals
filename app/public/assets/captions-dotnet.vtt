@@ -1,0 +1,7 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.000
+Technical walkthrough: .NET Core API integration.
+
+00:00:08.000 --> 00:00:16.000
+REST services, authentication, databases, and enterprise integration patterns are covered.

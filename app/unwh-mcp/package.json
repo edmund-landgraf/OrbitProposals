@@ -1,0 +1,21 @@
+{
+  "name": "unwh-mcp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/http.ts",
+    "start": "node dist/unwh-mcp/src/http.js",
+    "smoke": "tsx src/smoke.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0"
+  }
+}

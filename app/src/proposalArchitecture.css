@@ -1,0 +1,60 @@
+.proposal-architecture { padding: clamp(2rem, 4.5vw, 4.5rem) 0 5rem; }
+.proposal-architecture .container { max-width: 1320px; }
+.proposal-architecture-hero { display: grid; grid-template-columns: minmax(0,1.6fr) minmax(280px,.75fr); align-items: center; gap: clamp(2rem,5vw,5rem); margin-bottom: 2.5rem; }
+.proposal-architecture-hero h1 { font-family: Sora, sans-serif; font-size: clamp(2.3rem,4.6vw,4.2rem); letter-spacing: -.045em; line-height: 1.12; margin: .8rem 0 1.15rem; }
+.proposal-architecture-lead { max-width: 700px; color: #46515c; font-size: clamp(1.05rem,1.5vw,1.2rem); line-height: 1.65; }
+.proposal-architecture-actions { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem; margin-top:1.4rem; }
+.proposal-architecture-actions .button { text-decoration:none; }
+.proposal-architecture-intro { background:var(--night); color:#f7f4ed; padding:clamp(1.4rem,2.8vw,2.4rem); border-radius:12px; box-shadow:var(--shadow); }
+.proposal-architecture-intro p { font-family: "JetBrains Mono", monospace; line-height:1.8; font-size:clamp(.9rem,1.5vw,1.1rem); color:white; margin:.8rem 0 1rem; }
+.proposal-architecture-intro > span:last-child { color:#d5dce3; font-size:.93rem; line-height:1.6; }
+.proposal-architecture-kicker { display:block; font:700 .72rem "JetBrains Mono",monospace; letter-spacing:.12em; color:var(--teal); margin-bottom:.75rem; text-transform:uppercase; }
+.proposal-architecture-intro .proposal-architecture-kicker { color:#8fd0d0; }
+.proposal-architecture-block { background:rgba(255,253,246,.86); border:1px solid var(--line); border-radius:12px; padding:clamp(1.25rem,2.7vw,2.5rem); margin-bottom:1.7rem; }
+.proposal-architecture-block-header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem 2rem; margin-bottom:1.5rem; }
+.proposal-architecture-block-header h2 { font-family:Sora,sans-serif; font-size:clamp(1.45rem,2.4vw,2rem); margin:0 0 .7rem; letter-spacing:-.025em; }
+.proposal-architecture-block-header p { max-width:800px; line-height:1.7; color:#58616c; margin:0; }
+.proposal-architecture-textlink { color:var(--teal); font-weight:700; font-size:.9rem; text-underline-offset:3px; }
+.proposal-architecture-diagram { display:block; padding:clamp(.5rem,2vw,1.3rem); background:white; border:1px solid #e2e7e9; border-radius:10px; overflow-x:auto; }
+.proposal-architecture-diagram img { width:100%; min-width:720px; height:auto; display:block; }
+.proposal-architecture-diagram:hover { border-color:var(--teal); }
+.proposal-architecture-annotation,.proposal-architecture-source { color:#626c76; font-size:.83rem; line-height:1.7; }
+.proposal-architecture-annotation { margin:1rem 0 0; }
+.proposal-architecture-count { background:#e6f2ee; color:#164e48; border-radius:99px; padding:.5rem .75rem; font:700 .8rem "JetBrains Mono", monospace; white-space:nowrap; }
+.proposal-architecture-toolbar { display:grid; grid-template-columns:minmax(220px,2fr) repeat(2,minmax(150px,1fr)); gap:.85rem; margin:1.3rem 0 .9rem; }
+.proposal-architecture-toolbar label { display:grid; gap:.5rem; font-size:.78rem; font-weight:700; color:#485561; }
+.proposal-architecture-toolbar input,.proposal-architecture-toolbar select { width:100%; min-height:46px; padding:.7rem .8rem; background:white; border:1px solid #c7ced0; border-radius:7px; color:#182631; font-size:.9rem; font-family:inherit; }
+.proposal-architecture-results { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:1rem; font-size:.82rem; color:#52606b; margin-bottom:1rem; }
+.proposal-architecture-results>div { display:flex; flex-wrap:wrap; gap:.7rem; }
+.proposal-architecture-results button { appearance:none; border:0; background:none; padding:.35rem; color:var(--teal); font-size:.82rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+.proposal-architecture-tool-groups { display:grid; gap:.65rem; }
+.proposal-architecture-tool-group { border:1px solid #d9dedc; border-radius:8px; overflow:hidden; background:white; }
+.proposal-architecture-tool-group h3 { margin:0; }
+.proposal-architecture-tool-group h3 button { display:flex; align-items:center; width:100%; gap:.8rem; text-align:left; padding:.95rem 1rem; border:0; background:#f6f9f7; color:#17242b; font-size:1rem; font-weight:750; }
+.proposal-architecture-tool-group h3 button:hover { background:#edf4f1; }
+.proposal-architecture-chevron { width:1em; font-size:1.12rem; color:var(--teal); }
+.proposal-architecture-group-count { margin-left:auto; font:700 .75rem "JetBrains Mono", monospace; border-radius:999px; background:#e2ebec; padding:.25rem .65rem; color:#24565b; }
+.proposal-architecture-tool-list { padding:0 1rem; }
+.proposal-architecture-tool { padding:1rem .35rem; border-top:1px solid #e6e9e8; }
+.proposal-architecture-tool-head { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.7rem; }
+.proposal-architecture-tool h4 { font:700 .89rem "JetBrains Mono", monospace; overflow-wrap:anywhere; color:#103d46; margin:0; }
+.proposal-architecture-tool p { margin:.45rem 0 0; color:#425260; font-size:.91rem; line-height:1.6; }
+.proposal-architecture-tool-tags { display:flex; flex-wrap:wrap; gap:.4rem; }
+.proposal-architecture-tool-tags span { border:1px solid #d4dce0; border-radius:4px; padding:.18rem .4rem; color:#4b5d66; font:600 .65rem "JetBrains Mono",monospace; }
+.proposal-architecture-empty { padding:1.5rem; background:#f4f8f7; border:1px dashed #ccd8d5; border-radius:8px; color:#405357; }
+.proposal-architecture-downloads { display:flex; flex-wrap:wrap; gap:1.3rem; margin-top:1.3rem; font-size:.87rem; font-weight:700; color:var(--teal); }
+.proposal-architecture-source { margin:1.3rem .4rem; }
+.proposal-architecture-source code { overflow-wrap:anywhere; }
+@media(max-width:850px) {
+ .proposal-architecture-hero { grid-template-columns:1fr; }
+ .proposal-architecture-toolbar { grid-template-columns:1fr 1fr; }
+ .proposal-architecture-toolbar label:first-child { grid-column:1 / -1; }
+}
+@media(max-width:560px) {
+ .proposal-architecture-toolbar { grid-template-columns:1fr; }
+ .proposal-architecture-toolbar label:first-child { grid-column:auto; }
+ .proposal-architecture-tool-list { padding:0 .7rem; }
+ .proposal-architecture-block { padding:1.1rem; }
+ .proposal-architecture-diagram img { min-width:620px; }
+ .proposal-architecture-tool-head { align-items:flex-start; }
+}

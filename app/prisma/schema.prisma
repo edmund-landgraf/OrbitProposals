@@ -1,0 +1,2284 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  prospect
+  client
+  staff
+}
+enum MembershipStatus {
+  invited
+  active
+  suspended
+}
+enum EngagementKind {
+  workflow_check
+  capped_hours_4
+  capped_hours_8
+  fixed_price
+  hourly
+}
+enum PricingModel {
+  workflow_check
+  capped_hours
+  fixed_price
+  hourly
+}
+enum RecordStatus {
+  draft
+  pending_approval
+  active
+  on_hold
+  closed
+}
+enum ChatAgent {
+  proposal
+  contract
+  project_manager
+}
+enum ChatStatus {
+  open
+  human_held
+  closed
+}
+enum ChatRole {
+  user
+  assistant
+  human
+  system
+}
+enum ContractStatus {
+  draft
+  sent
+  signed
+  cancelled
+}
+enum BillingTrigger {
+  contract_signed
+  milestone_accepted
+  manual
+}
+enum InvoiceStatus {
+  draft
+  sent
+  paid
+  void
+  overdue
+}
+enum ProjectStatus {
+  planned
+  active
+  blocked
+  complete
+}
+enum MilestoneStatus {
+  planned
+  in_progress
+  submitted
+  accepted
+  blocked
+}
+enum TaskStatus {
+  todo
+  in_progress
+  blocked
+  done
+}
+enum ChangeOrderStatus {
+  pending
+  approved
+  rejected
+}
+enum EscalationStatus {
+  open
+  claimed
+  resolved
+}
+enum ApprovalKind {
+  pricing
+  change_order
+}
+enum ApprovalStatus {
+  pending
+  approved
+  rejected
+}
+enum ScheduleAmountRule {
+  percent_of_total
+  zero
+}
+enum LeftoverCentTarget {
+  last_entry
+}
+enum UnscopedRemainderRule {
+  sole_or_final_milestone
+}
+enum RetainagePolicy {
+  add_on_accept
+}
+
+enum CatalogVersionStatus {
+  draft
+  published
+}
+
+enum AccessRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  email String @unique
+  displayName String
+  isAdmin Boolean @default(false)
+  totpSecretEnc String?
+  totpEnabledAt DateTime?
+  totpRecoveryHashes String[] @default([])
+  /// Set while an admin has suspended the account. Magic-link and password sign-in treat this like an unknown email.
+  suspendedAt DateTime?
+  createdAt DateTime @default(now())
+  memberships Membership[]
+  ownedProposals Proposal[] @relation("ProposalOwner")
+  assignedTasks Task[] @relation("TaskAssignee")
+  requestedChangeOrders ChangeOrder[] @relation("ChangeOrderRequester")
+  assignedEscalations Escalation[] @relation("EscalationAssignee")
+  approvals Approval[] @relation("ApprovalDecider")
+  auditEvents AuditEvent[] @relation("AuditActor")
+  chatSessions ChatSession[]
+  mcpTokens McpToken[]
+  timeEntries TimeEntry[]
+  uploadedProposalAttachments ProposalAttachment[]
+  guestInvites ProposalGuestInvite[]
+}
+
+model AccessRequest {
+  id String @id @default(uuid()) @db.Uuid
+  email String
+  name String
+  company String?
+  role String?
+  reason String
+  referral String?
+  status AccessRequestStatus @default(pending)
+  reviewedBy String? @db.Uuid
+  reviewedAt DateTime?
+  reviewNote String?
+  createdAt DateTime @default(now())
+  ip String?
+  userAgent String?
+  @@index([email, status])
+  @@index([status, createdAt])
+}
+
+model MagicLink {
+  id String @id @default(uuid()) @db.Uuid
+  email String
+  tokenHash String @unique
+  expiresAt DateTime
+  consumedAt DateTime?
+  createdAt DateTime @default(now())
+  requestIp String?
+  userAgent String?
+  @@index([email, expiresAt])
+  @@index([expiresAt])
+}
+
+model Organization {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  slug String @unique
+  createdAt DateTime @default(now())
+  memberships Membership[]
+  proposals Proposal[]
+  contracts Contract[]
+  projects Project[]
+  auditEvents AuditEvent[]
+  mcpClients McpClient[]
+  contractCredits ContractCredit[]
+}
+
+model Membership {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  organizationId String @db.Uuid
+  role Role
+  status MembershipStatus @default(invited)
+  permissions Json @default("[]")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@unique([userId, organizationId])
+  @@index([organizationId, status])
+}
+
+model McpClient {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String? @db.Uuid
+  clientId String @unique
+  name String
+  redirectUris Json @default("[]")
+  scopes Json @default("[]")
+  secretHash String?
+  createdAt DateTime @default(now())
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  tokens McpToken[]
+}
+
+model McpToken {
+  id String @id @default(uuid()) @db.Uuid
+  clientId String @db.Uuid
+  userId String? @db.Uuid
+  tokenHash String @unique
+  scopes Json @default("[]")
+  expiresAt DateTime?
+  refreshTokenHash String? @unique
+  refreshExpiresAt DateTime?
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  client McpClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([clientId, revokedAt])
+}
+
+model IdempotencyKey {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String? @db.Uuid
+  userId String? @db.Uuid
+  requestId String
+  operation String
+  response Json
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+  @@unique([organizationId, requestId, operation])
+  @@index([expiresAt])
+}
+
+model Proposal {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String? @db.Uuid
+  ownerId String @db.Uuid
+  title String
+  engagement EngagementKind
+  status RecordStatus @default(draft)
+  scope Json
+  timeline Json
+  pricingModel PricingModel
+  pricing Json
+  version Int @default(1)
+  /// Stored deadline. Not enforced: proposals do not expire. Migration 0055 clears this and drops the insert trigger.
+  validUntil DateTime? @map("valid_until")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  owner User @relation("ProposalOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  options ProposalOption[]
+  optionGroups ProposalOptionGroup[]
+  milestones TimelineMilestone[]
+  chatSessions ChatSession[]
+  contracts Contract[]
+  publicLinks ProposalPublicLink[]
+  catalogVersionId String? @map("catalog_version_id") @db.Uuid
+  catalogVersion CatalogVersion? @relation(fields: [catalogVersionId], references: [id], onDelete: Restrict)
+  reviewState String @default("draft") @map("review_state")
+  templateCode String @default("standard") @map("template_code")
+  template ProposalTemplate @relation(fields: [templateCode], references: [code], onDelete: Restrict)
+  approvedVersionId String? @map("approved_version_id") @db.Uuid
+  approvedVersion ProposalVersion? @relation("ApprovedProposalVersion", fields: [approvedVersionId], references: [id], onDelete: SetNull)
+  versions ProposalVersion[] @relation("ProposalVersions")
+  reviewComments ProposalReviewComment[]
+  reviewFlags ProposalReviewFlag[]
+  reviewEvents ProposalReviewEvent[]
+  reviewMeeting ProposalReviewMeeting?
+  nodes ProposalNode[]
+  nodeEdges ProposalNodeEdge[]
+  completionEvents ProposalCompletionEvent[]
+  parkedChanges ProposalParkedChange[]
+  intakePark ProposalIntakePark[]
+  views ProposalView[]
+  approvalSteps ProposalApprovalStep[]
+  roles ProposalRole[]
+  attachments ProposalAttachment[]
+  uploadParts ProposalUploadPart[]
+  changeItems ProposalChangeItem[]
+  guestInvites ProposalGuestInvite[]
+  sourceDocuments ProposalSourceDocument[]
+  requirements ProposalRequirement[]
+  managerTasks ProposalManagerTask[]
+  goNoGoAssessments ProposalGoNoGoAssessment[]
+  scopeBaselines ProposalScopeBaseline[]
+  pricingModels ProposalPricingModel[]
+  complianceSignoffs ProposalComplianceSignoff[]
+  contentLibraryUses ContentLibraryUse[]
+  @@index([organizationId, status, updatedAt])
+  @@index([catalogVersionId])
+  @@index([reviewState])
+}
+
+/// Uploaded PDF or Markdown file stored with a proposal.
+model ProposalAttachment {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  filename String
+  contentType String @map("content_type")
+  byteSize Int @map("byte_size")
+  sha256 String
+  bytes Bytes
+  sourceUrl String? @map("source_url")
+  uploadedById String @map("uploaded_by_id") @db.Uuid
+  sortOrder Int @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  uploadedBy User @relation(fields: [uploadedById], references: [id], onDelete: Restrict)
+  @@unique([proposalId, filename])
+  @@index([proposalId, sortOrder])
+  @@map("proposal_attachment")
+}
+
+/// One slice of a PDF or Markdown file, assembled into an attachment when every part has arrived.
+model ProposalUploadPart {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  filename String
+  partIndex Int @map("part_index")
+  partCount Int @map("part_count")
+  bytes Bytes
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@unique([proposalId, filename, partIndex])
+  @@index([proposalId, filename])
+  @@map("proposal_upload_part")
+}
+
+/// A pushback deadline, a formal pushback, or a change request, with the person who decides it.
+model ProposalChangeItem {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  kind String
+  summary String
+  detail String @default("")
+  approverName String @map("approver_name")
+  dueAt DateTime? @map("due_at")
+  status String @default("open")
+  decision String?
+  decisionNote String? @map("decision_note")
+  decidedAt DateTime? @map("decided_at")
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, kind, status])
+  @@map("proposal_change_item")
+}
+
+/// A named client person who can open this proposal in the portal. Recording an invite does not send mail.
+model ProposalGuestInvite {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  userId String? @map("user_id") @db.Uuid
+  name String
+  email String
+  taskId String? @map("task_id") @db.Uuid
+  status String @default("invited")
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@index([proposalId, email])
+  @@index([userId, status])
+  @@map("proposal_guest_invite")
+}
+
+/// One opening of a proposal or one of its parts.
+model ProposalView {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @db.Uuid
+  viewerId String @db.Uuid
+  sectionKey String? @map("section_key")
+  seenAt DateTime @default(now()) @map("seen_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, seenAt])
+  @@map("proposal_view")
+}
+
+/// Ordered people who must approve before the proposal can be approved. An empty chain keeps the single staff approval.
+model ProposalApprovalStep {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  sortOrder Int @map("sort_order")
+  label String
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  decision ProposalApproval?
+  @@index([proposalId, sortOrder])
+  @@map("proposal_approval_step")
+}
+
+model ProposalApproval {
+  id String @id @default(uuid()) @db.Uuid
+  stepId String @unique @map("step_id") @db.Uuid
+  actorId String @map("actor_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  step ProposalApprovalStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  @@map("proposal_approval")
+}
+
+/// Proposal-manager records are immutable-by-version snapshots for intake, requirements,
+/// tasks, qualification, scope, and pricing. Domain-specific JSON keeps this additive
+/// migration compatible with existing proposal documents while the workflows mature.
+model ProposalSourceDocument {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  fileName String @map("file_name")
+  mimeType String? @map("mime_type")
+  content String
+  status String @default("received")
+  metadata Json @default("{}")
+  extractedAt DateTime? @map("extracted_at")
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, createdAt])
+  @@map("proposal_source_document")
+}
+
+model ProposalRequirement {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  sourceDocumentId String? @map("source_document_id") @db.Uuid
+  text String
+  requirementType String @map("requirement_type")
+  sourceReference String? @map("source_reference")
+  mandatory Boolean @default(false)
+  confidence Float @default(1)
+  status String @default("unmapped")
+  ownerId String? @map("owner_id") @db.Uuid
+  dueAt DateTime? @map("due_at")
+  priority String @default("normal")
+  mappedNodeKeys String[] @default([]) @map("mapped_node_keys")
+  suggestedNodeKeys String[] @default([]) @map("suggested_node_keys")
+  duplicateOfId String? @map("duplicate_of_id") @db.Uuid
+  confirmed Boolean @default(false)
+  evidence Json @default("[]")
+  reviewNote String? @map("review_note")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, status, mandatory])
+  @@index([sourceDocumentId])
+  @@map("proposal_requirement")
+}
+
+model ProposalComplianceSignoff {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  note String @default("")
+  signedById String? @map("signed_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, createdAt])
+  @@map("proposal_compliance_signoff")
+}
+
+model ProposalManagerTask {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  title String
+  description String @default("")
+  taskType String @map("task_type")
+  status String @default("open")
+  priority String @default("normal")
+  ownerId String? @map("owner_id") @db.Uuid
+  assigneeName String? @map("assignee_name")
+  assigneeEmail String? @map("assignee_email")
+  side String @default("us")
+  sectionKey String? @map("section_key")
+  requirementId String? @map("requirement_id") @db.Uuid
+  dependsOnTaskId String? @map("depends_on_task_id") @db.Uuid
+  dueAt DateTime? @map("due_at")
+  completedAt DateTime? @map("completed_at")
+  note String?
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, status, dueAt])
+  @@index([ownerId, status, dueAt])
+  @@map("proposal_manager_task")
+}
+
+model ProposalGoNoGoAssessment {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  status String @default("draft")
+  decision String?
+  score Int?
+  factors Json @default("[]")
+  rationale String?
+  decidedById String? @map("decided_by_id") @db.Uuid
+  decidedAt DateTime? @map("decided_at")
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, status, updatedAt])
+  @@map("proposal_go_no_go_assessment")
+}
+
+model ProposalScopeBaseline {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  version Int @default(1)
+  status String @default("draft")
+  items Json @default("[]")
+  assumptions Json @default("[]")
+  exclusions Json @default("[]")
+  risks Json @default("[]")
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@unique([proposalId, version])
+  @@index([proposalId, createdAt])
+  @@map("proposal_scope_baseline")
+}
+
+model ProposalPricingModel {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  version Int @default(1)
+  currency String
+  lines Json @default("[]")
+  options Json @default("[]")
+  totals Json @default("{}")
+  approvalStatus String @default("draft") @map("approval_status")
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@unique([proposalId, version])
+  @@index([proposalId, createdAt])
+  @@map("proposal_pricing_model")
+}
+
+model ContentLibraryItem {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String? @map("organization_id") @db.Uuid
+  stableKey String @unique @map("stable_key")
+  title String
+  category String
+  body Json
+  tags String[] @default([])
+  clientLabel String? @map("client_label")
+  guidance String @default("")
+  visibility String @default("organization")
+  source String?
+  industry String?
+  product String?
+  status String @default("draft")
+  version Int @default(1)
+  approvedVersion Int? @map("approved_version")
+  ownerId String? @map("owner_id") @db.Uuid
+  effectiveFrom DateTime? @map("effective_from")
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  versions ContentLibraryVersion[]
+  uses ContentLibraryUse[]
+  @@index([organizationId, status, category])
+  @@index([expiresAt])
+  @@map("content_library_item")
+}
+
+model ContentLibraryVersion {
+  id String @id @default(uuid()) @db.Uuid
+  itemId String @map("item_id") @db.Uuid
+  version Int
+  title String
+  body Json
+  guidance String @default("")
+  tags String[] @default([])
+  changeSummary String @default("") @map("change_summary")
+  status String @default("draft")
+  authorId String? @map("author_id") @db.Uuid
+  approvedById String? @map("approved_by_id") @db.Uuid
+  approvedAt DateTime? @map("approved_at")
+  supersededBy Int? @map("superseded_by")
+  idempotencyKey String? @map("idempotency_key")
+  createdAt DateTime @default(now()) @map("created_at")
+  item ContentLibraryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  @@unique([itemId, version])
+  @@unique([itemId, idempotencyKey])
+  @@index([itemId, createdAt])
+  @@map("content_library_version")
+}
+
+model ContentLibraryUse {
+  id String @id @default(uuid()) @db.Uuid
+  itemId String @map("item_id") @db.Uuid
+  version Int
+  proposalId String @map("proposal_id") @db.Uuid
+  sectionKey String @map("section_key")
+  actorId String? @map("actor_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  item ContentLibraryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([itemId, createdAt])
+  @@index([proposalId])
+  @@map("content_library_use")
+}
+
+/// Historical expiry settings. One row. Deadlines are not enforced; proposals do not expire.
+model ProposalExpiryConfig {
+  id String @id @db.Uuid
+  defaultValidDays Int @map("default_valid_days")
+  nearExpiryDays Int @map("near_expiry_days")
+  extendDefaultDays Int @map("extend_default_days")
+  extendMaxDays Int @map("extend_max_days")
+  labelActive String @map("label_active")
+  labelExpiring String @map("label_expiring")
+  labelExpired String @map("label_expired")
+  expiredMessage String @map("expired_message")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  @@map("proposal_expiry_config")
+}
+model ProposalPublicLink {
+  id         String   @id @default(uuid()) @db.Uuid
+  proposalId String   @db.Uuid
+  tokenHash  String   @unique
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+  proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, revokedAt])
+  @@index([expiresAt])
+}
+
+model ProposalOptionGroup {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @db.Uuid
+  name String
+  mode String
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  options ProposalOption[]
+  @@index([proposalId])
+  @@map("proposal_option_group")
+}
+
+model ProposalOption {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @db.Uuid
+  label String
+  description String
+  priceDeltaMinor Int
+  priceCurrency String
+  selected Boolean @default(false)
+  selection String @default("optional")
+  groupId String? @db.Uuid
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  group ProposalOptionGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  @@index([proposalId])
+  @@index([groupId])
+}
+
+model TimelineMilestone {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @db.Uuid
+  title String
+  description String
+  dueDate DateTime?
+  weeksLow Int?
+  weeksHigh Int?
+  hoursLow Int?
+  hoursHigh Int?
+  gate String @default("")
+  actualStart DateTime?
+  actualEnd DateTime?
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  rolePhases ProposalRolePhase[]
+  @@index([proposalId, dueDate])
+}
+
+/// Who does the work on a proposal. heaviestAll and heaviestGates cover the whole engagement or gate reviews; rolePhases names specific timeline phases.
+model ProposalRole {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  sortOrder Int @map("sort_order")
+  name String
+  side String
+  responsibility String
+  heaviestAll Boolean @default(false) @map("heaviest_all")
+  heaviestGates Boolean @default(false) @map("heaviest_gates")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  phases ProposalRolePhase[]
+  @@index([proposalId, sortOrder])
+  @@map("proposal_role")
+}
+
+model ProposalRolePhase {
+  roleId String @map("role_id") @db.Uuid
+  milestoneId String @map("milestone_id") @db.Uuid
+  role ProposalRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  milestone TimelineMilestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  @@id([roleId, milestoneId])
+  @@map("proposal_role_phase")
+}
+
+model ChatSession {
+  id String @id @default(uuid()) @db.Uuid
+  ownerId String? @db.Uuid
+  agent ChatAgent
+  status ChatStatus @default(open)
+  proposalId String? @db.Uuid
+  publicTokenHash String? @unique
+  contactEmail String?
+  submittedAt DateTime?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  owner User? @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  proposal Proposal? @relation(fields: [proposalId], references: [id], onDelete: SetNull)
+  messages ChatMessage[]
+  escalations Escalation[]
+  @@index([ownerId, status, updatedAt])
+  @@index([publicTokenHash, status])
+  @@index([expiresAt])
+}
+
+model ChatMessage {
+  id String @id @default(uuid()) @db.Uuid
+  sessionId String @db.Uuid
+  role ChatRole
+  content String
+  toolCallId String? @db.Uuid
+  createdAt DateTime @default(now())
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  @@index([sessionId, createdAt])
+}
+
+model Contract {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @db.Uuid
+  organizationId String @db.Uuid
+  status ContractStatus @default(draft)
+  terms String
+  billing Json
+  signedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  entries BillingEntry[]
+  invoices Invoice[]
+  timeEntries TimeEntry[]
+  projects Project[]
+  changeOrders ChangeOrder[]
+  catalogVersionId String? @map("catalog_version_id") @db.Uuid
+  billingScheduleTemplateId String? @map("billing_schedule_template_id") @db.Uuid
+  catalogVersion CatalogVersion? @relation(fields: [catalogVersionId], references: [id], onDelete: Restrict)
+  billingScheduleTemplate BillingScheduleTemplate? @relation(fields: [billingScheduleTemplateId], references: [id], onDelete: SetNull)
+  creditsIssued ContractCredit[]
+  proposalVersionId String? @unique @map("proposal_version_id") @db.Uuid
+  proposalVersion ProposalVersion? @relation(fields: [proposalVersionId], references: [id], onDelete: SetNull)
+  scope Json?
+  pricing Json?
+  acceptedAt DateTime? @map("accepted_at")
+  paymentTermId String? @map("payment_term_id") @db.Uuid
+  paymentTerm PaymentTerm? @relation(fields: [paymentTermId], references: [id], onDelete: SetNull)
+  retainagePercentBasis Int @default(0) @map("retainage_percent_basis")
+  retainageHeldMinor Int @default(0) @map("retainage_held_minor")
+  esignRequests ContractEsignRequest[]
+  @@index([organizationId, status, updatedAt])
+  @@index([paymentTermId])
+  @@index([catalogVersionId])
+  @@index([billingScheduleTemplateId])
+}
+
+model BillingEntry {
+  id String @id @default(uuid()) @db.Uuid
+  contractId String @db.Uuid
+  label String
+  percent Decimal @db.Decimal(8, 4)
+  amountMinor Int
+  currency String
+  dueOn DateTime?
+  trigger BillingTrigger
+  milestoneId String? @db.Uuid
+  invoiceId String? @db.Uuid
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  invoice Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  @@unique([contractId, label])
+  @@index([contractId])
+  @@index([milestoneId])
+}
+
+model Invoice {
+  id String @id @default(uuid()) @db.Uuid
+  contractId String @db.Uuid
+  amountMinor Int
+  currency String
+  status InvoiceStatus @default(draft)
+  dueDate DateTime
+  paidAt DateTime?
+  grossMinor Int? @map("gross_minor")
+  retainageMinor Int @default(0) @map("retainage_minor")
+  kind String @default("standard")
+  createdAt DateTime @default(now())
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict)
+  entries BillingEntry[]
+  timeEntries TimeEntry[]
+  creditsIssued ContractCredit[] @relation("CreditSourceInvoice")
+  creditsRedeemed ContractCredit[] @relation("CreditRedeemedInvoice")
+  charges InvoiceCharge[]
+  @@index([contractId, status, dueDate])
+}
+
+/// A successful charge against a payment processor. Card numbers are never stored.
+model InvoiceCharge {
+  id String @id @default(uuid()) @db.Uuid
+  invoiceId String @db.Uuid
+  processor String
+  processorId String @map("processor_id")
+  amountMinor Int @map("amount_minor")
+  currency String
+  createdAt DateTime @default(now()) @map("created_at")
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  @@index([invoiceId])
+  @@map("invoice_charge")
+}
+
+/// Hours logged against a contract. invoiceId stays null until a draft invoice bills the entry.
+model TimeEntry {
+  id String @id @default(uuid()) @db.Uuid
+  contractId String @db.Uuid
+  userId String @db.Uuid
+  date DateTime @db.Date
+  hours Decimal @db.Decimal(8, 2)
+  description String
+  billable Boolean @default(true)
+  invoiceId String? @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  invoice Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  @@index([contractId, date])
+  @@index([invoiceId])
+  @@index([userId])
+}
+
+model Project {
+  id String @id @default(uuid()) @db.Uuid
+  contractId String @db.Uuid
+  organizationId String @db.Uuid
+  title String
+  status ProjectStatus @default(planned)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  milestones Milestone[]
+  tasks Task[]
+  @@index([organizationId, status, updatedAt])
+}
+
+model Milestone {
+  id String @id @default(uuid()) @db.Uuid
+  projectId String @db.Uuid
+  title String
+  description String
+  dueDate DateTime?
+  status MilestoneStatus @default(planned)
+  retainageMinor Int?
+  retainageCurrency String?
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks Task[]
+  entries BillingEntry[]
+  @@index([projectId, status, dueDate])
+}
+
+model Task {
+  id String @id @default(uuid()) @db.Uuid
+  projectId String @db.Uuid
+  milestoneId String? @db.Uuid
+  title String
+  description String
+  status TaskStatus @default(todo)
+  assigneeId String? @db.Uuid
+  dueDate DateTime?
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  assignee User? @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  @@index([projectId, status, dueDate])
+}
+
+model ChangeOrder {
+  id String @id @default(uuid()) @db.Uuid
+  contractId String @db.Uuid
+  requestedBy String @db.Uuid
+  summary String
+  priceDeltaMinor Int?
+  priceCurrency String?
+  status ChangeOrderStatus @default(pending)
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  requester User @relation("ChangeOrderRequester", fields: [requestedBy], references: [id], onDelete: Restrict)
+  @@index([contractId, status])
+}
+
+model Escalation {
+  id String @id @default(uuid()) @db.Uuid
+  sessionId String @db.Uuid
+  reason String
+  status EscalationStatus @default(open)
+  assigneeId String? @db.Uuid
+  createdAt DateTime @default(now())
+  resolvedAt DateTime?
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  assignee User? @relation("EscalationAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  @@index([status, createdAt])
+}
+
+model Approval {
+  id String @id @default(uuid()) @db.Uuid
+  kind ApprovalKind
+  recordId String @db.Uuid
+  status ApprovalStatus @default(pending)
+  decidedBy String? @db.Uuid
+  reason String?
+  decidedAt DateTime?
+  decider User? @relation("ApprovalDecider", fields: [decidedBy], references: [id], onDelete: SetNull)
+  @@index([kind, recordId, status])
+}
+
+/// Payment terms such as net 15 and net 30. One row is the default for a new contract.
+model PaymentTerm {
+  id String @id @default(uuid()) @db.Uuid
+  code String @unique
+  label String
+  days Int
+  isDefault Boolean @default(false) @map("is_default")
+  sortOrder Int @map("sort_order")
+  contracts Contract[]
+  @@map("payment_term")
+}
+
+/// Default retainage withheld from each invoice. percent_basis uses 1000000 = 100%.
+model RetainageDefault {
+  id String @id @default(uuid()) @db.Uuid
+  percentBasis Int @map("percent_basis")
+  label String
+  @@map("retainage_default")
+}
+
+/// Reminder rules. kind near_expiry reads Proposal.valid_until when that column exists; state_age reads review_state and updatedAt.
+model ReminderRule {
+  code String @id
+  kind String
+  audience String
+  thresholdDays Int @map("threshold_days")
+  reviewStates String[] @default([]) @map("review_states")
+  label String
+  messageTemplate String @map("message_template")
+  active Boolean @default(true)
+  sortOrder Int @default(0) @map("sort_order")
+  @@map("reminder_rule")
+}
+
+/// A due reminder. Runs queue rows; the delivery run sends client ones through reminder_delivery.
+model ProposalReminder {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  ruleCode String @map("rule_code")
+  audience String
+  anchorKey String @map("anchor_key")
+  message String
+  status String @default("queued")
+  createdAt DateTime @default(now()) @map("created_at")
+  sentAt DateTime? @map("sent_at")
+  @@unique([proposalId, ruleCode, anchorKey])
+  @@index([status, createdAt])
+  @@map("proposal_reminder")
+}
+
+/// Reminder channels a client can pick at intake (email, sms, both, none).
+model ContactChannel {
+  code String @id
+  label String
+  sendsEmail Boolean @default(false) @map("sends_email")
+  sendsSms Boolean @default(false) @map("sends_sms")
+  sortOrder Int @default(0) @map("sort_order")
+  @@map("contact_channel")
+}
+
+/// How and when a client wants reminders. One row per user.
+model ContactPreference {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @unique @map("user_id") @db.Uuid
+  organizationId String? @map("organization_id") @db.Uuid
+  channel String
+  email String?
+  phone String?
+  consentAt DateTime? @map("consent_at")
+  consentSource String? @map("consent_source")
+  quietStart String? @map("quiet_start")
+  quietEnd String? @map("quiet_end")
+  timezone String?
+  optedOutAt DateTime? @map("opted_out_at")
+  optOutSource String? @map("opt_out_source")
+  unsubscribeToken String @unique @map("unsubscribe_token")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  @@index([phone])
+  @@map("contact_preference")
+}
+
+/// Delivery and tickler settings, one value per row.
+model ReminderDeliverySetting {
+  code String @id
+  intValue Int? @map("int_value")
+  textValue String? @map("text_value")
+  description String
+  @@map("reminder_delivery_setting")
+}
+
+/// Tickler schedules a client can choose.
+model TicklerOption {
+  code String @id
+  label String
+  repeats Boolean @default(false)
+  defaultDays Int? @map("default_days")
+  sortOrder Int @default(0) @map("sort_order")
+  active Boolean @default(true)
+  @@map("tickler_option")
+}
+
+/// A client-set tickler for an unfinished proposal.
+model ProposalTickler {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @unique @map("proposal_id") @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  optionCode String @map("option_code")
+  intervalDays Int? @map("interval_days")
+  weekday Int?
+  timeOfDay String @map("time_of_day")
+  nextAt DateTime? @map("next_at")
+  sentCount Int @default(0) @map("sent_count")
+  stoppedAt DateTime? @map("stopped_at")
+  stopReason String? @map("stop_reason")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  @@index([nextAt])
+  @@map("proposal_tickler")
+}
+
+/// Reminder copy per rule and channel.
+model ReminderTemplate {
+  ruleCode String @map("rule_code")
+  channel String
+  subject String?
+  body String
+  @@id([ruleCode, channel])
+  @@map("reminder_template")
+}
+
+/// One send per reminder and channel, with attempts and backoff.
+model ReminderDelivery {
+  id String @id @default(uuid()) @db.Uuid
+  reminderId String @map("reminder_id") @db.Uuid
+  userId String? @map("user_id") @db.Uuid
+  channel String
+  destination String?
+  provider String?
+  status String @default("pending")
+  attempts Int @default(0)
+  nextAttemptAt DateTime? @map("next_attempt_at")
+  lastError String? @map("last_error")
+  providerMessageId String? @map("provider_message_id")
+  sentAt DateTime? @map("sent_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  @@unique([reminderId, channel], map: "reminder_delivery_reminder_channel_key")
+  @@index([status, nextAttemptAt], map: "reminder_delivery_status_next_idx")
+  @@index([userId, sentAt], map: "reminder_delivery_user_sent_idx")
+  @@map("reminder_delivery")
+}
+model AuditEvent {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String? @db.Uuid
+  actorUserId String? @db.Uuid
+  tokenId String? @db.Uuid
+  operation String
+  method String
+  path String
+  recordType String?
+  recordId String? @db.Uuid
+  requestId String
+  inputRedacted Json
+  statusCode Int
+  previousHash String?
+  hash String
+  createdAt DateTime @default(now())
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  actor User? @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  @@index([organizationId, createdAt])
+  @@index([recordType, recordId, createdAt])
+}
+
+/// Why a proposal is on the staff follow-up queue, and how urgent that reason is.
+model FollowUpReason {
+  code String @id
+  kind String
+  reviewState String? @map("review_state")
+  label String
+  baseWeight Int @map("base_weight")
+  unitWeight Int @default(0) @map("unit_weight")
+  thresholdDays Int? @map("threshold_days")
+  active Boolean @default(true)
+  sortOrder Int @default(0) @map("sort_order")
+  @@map("follow_up_reason")
+}
+/// One published catalog. Proposals and contracts may point at the version they used.
+model CatalogVersion {
+  id String @id @default(uuid()) @db.Uuid
+  status CatalogVersionStatus @default(published)
+  effectiveFrom DateTime @map("effective_from")
+  effectiveTo DateTime? @map("effective_to")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  pricingModels CatalogPricingModel[]
+  priceTiers PriceTier[]
+  billingScheduleTemplates BillingScheduleTemplate[]
+  invoicePolicy InvoicePolicy?
+  invoiceStatusTransitions InvoiceStatusTransition[]
+  oauthScopes OauthScope[]
+  sessionScopeGrants SessionScopeGrant[]
+  proposals Proposal[]
+  contracts Contract[]
+  creditRules CreditRule[]
+  firstInvoiceRules FirstInvoiceRule[]
+  @@index([effectiveFrom, effectiveTo])
+  @@map("catalog_version")
+}
+
+/// What the first invoice is for one pricing model on one catalog version.
+/// percent_basis uses the schedule scale: 1000000 is 100%.
+model FirstInvoiceRule {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  pricingModel PricingModel @map("pricing_model")
+  kind String
+  percentBasis Int? @map("percent_basis")
+  periodDays Int? @map("period_days")
+  label String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  @@unique([catalogVersionId, pricingModel])
+  @@map("first_invoice_rule")
+}
+
+model CatalogPricingModel {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  code PricingModel
+  sortOrder Int @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  tiers PriceTier[]
+  templates BillingScheduleTemplate[]
+  @@unique([catalogVersionId, code])
+  @@map("pricing_model")
+}
+
+/// amount_minor is the package price or the hourly rate, in cents. min_amount_minor is the floor.
+model PriceTier {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  pricingModelId String @map("pricing_model_id") @db.Uuid
+  code String
+  amountMinor Int @map("amount_minor")
+  hours Int?
+  minAmountMinor Int? @map("min_amount_minor")
+  currency String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  pricingModel CatalogPricingModel @relation(fields: [pricingModelId], references: [id], onDelete: Cascade)
+  @@unique([catalogVersionId, code])
+  @@index([pricingModelId])
+  @@map("price_tier")
+}
+
+model BillingScheduleTemplate {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  pricingModelId String @map("pricing_model_id") @db.Uuid
+  percentBasis Int @map("percent_basis")
+  leftoverCentTarget LeftoverCentTarget @map("leftover_cent_target")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  pricingModel CatalogPricingModel @relation(fields: [pricingModelId], references: [id], onDelete: Cascade)
+  lines BillingScheduleTemplateLine[]
+  contracts Contract[]
+  @@unique([catalogVersionId, pricingModelId])
+  @@map("billing_schedule_template")
+}
+
+model BillingScheduleTemplateLine {
+  id String @id @default(uuid()) @db.Uuid
+  templateId String @map("template_id") @db.Uuid
+  sortOrder Int @map("sort_order")
+  label String
+  trigger BillingTrigger
+  percentBasis Int @map("percent_basis")
+  amountMinor Int? @map("amount_minor")
+  amountRule ScheduleAmountRule @map("amount_rule")
+  dueOffsetDays Int? @map("due_offset_days")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  template BillingScheduleTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  @@unique([templateId, sortOrder])
+  @@unique([templateId, label])
+  @@map("billing_schedule_template_line")
+}
+
+/// Due-day offsets are whole days from UTC today. Null due_offset_days on a line means no due date.
+model InvoicePolicy {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @unique @map("catalog_version_id") @db.Uuid
+  signingDueOffsetDays Int @map("signing_due_offset_days")
+  milestoneDueOffsetDays Int @map("milestone_due_offset_days")
+  preferMilestoneDueDate Boolean @map("prefer_milestone_due_date")
+  initialStatus InvoiceStatus @map("initial_status")
+  unscopedRemainderRule UnscopedRemainderRule @map("unscoped_remainder_rule")
+  retainagePolicy RetainagePolicy @map("retainage_policy")
+  invoiceOnSign Boolean @map("invoice_on_sign")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  @@map("invoice_policy")
+}
+
+model InvoiceStatusTransition {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  fromStatus InvoiceStatus @map("from_status")
+  toStatus InvoiceStatus @map("to_status")
+  staffOnly Boolean @map("staff_only")
+  createdAt DateTime @default(now()) @map("created_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  @@unique([catalogVersionId, fromStatus, toStatus])
+  @@map("invoice_status_transition")
+}
+
+model OauthScope {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  scope String
+  mcp Boolean
+  staffOnly Boolean @default(false) @map("staff_only")
+  createdAt DateTime @default(now()) @map("created_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  @@unique([catalogVersionId, scope])
+  @@map("oauth_scope")
+}
+
+model SessionScopeGrant {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  role Role
+  scope String
+  createdAt DateTime @default(now()) @map("created_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  @@unique([catalogVersionId, role, scope])
+  @@index([catalogVersionId, role])
+  @@map("session_scope_grant")
+}
+
+/// Follow-on credit for a qualifying purchase. Percent scale matches the schedule: 1000000 is 100%.
+/// credit_amount_minor wins when set; otherwise credit_percent_basis is applied to the source invoice.
+model CreditRule {
+  id String @id @default(uuid()) @db.Uuid
+  catalogVersionId String @map("catalog_version_id") @db.Uuid
+  code String
+  sourcePricingModel PricingModel @map("source_pricing_model")
+  sourceTierCode String @default("") @map("source_tier_code")
+  windowDays Int @map("window_days")
+  creditAmountMinor Int? @map("credit_amount_minor")
+  creditPercentBasis Int? @map("credit_percent_basis")
+  currency String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  catalogVersion CatalogVersion @relation(fields: [catalogVersionId], references: [id], onDelete: Cascade)
+  targets CreditRuleTarget[]
+  credits ContractCredit[]
+  @@unique([catalogVersionId, code])
+  @@map("credit_rule")
+}
+
+/// A follow-on pricing model that may redeem the credit. Empty tier_code means every tier of that model.
+model CreditRuleTarget {
+  id String @id @default(uuid()) @db.Uuid
+  creditRuleId String @map("credit_rule_id") @db.Uuid
+  pricingModel PricingModel @map("pricing_model")
+  tierCode String @default("") @map("tier_code")
+  creditRule CreditRule @relation(fields: [creditRuleId], references: [id], onDelete: Cascade)
+  @@unique([creditRuleId, pricingModel, tierCode])
+  @@map("credit_rule_target")
+}
+
+/// One credit for one client contract. Redeemed once, and unused after expires_at.
+model ContractCredit {
+  id String @id @default(uuid()) @db.Uuid
+  organizationId String @map("organization_id") @db.Uuid
+  sourceContractId String @map("source_contract_id") @db.Uuid
+  sourceInvoiceId String @map("source_invoice_id") @db.Uuid
+  creditRuleId String @map("credit_rule_id") @db.Uuid
+  amountMinor Int @map("amount_minor")
+  currency String
+  issuedAt DateTime @map("issued_at")
+  expiresAt DateTime @map("expires_at")
+  redeemedAt DateTime? @map("redeemed_at")
+  redeemedInvoiceId String? @map("redeemed_invoice_id") @db.Uuid
+  voidedAt DateTime? @map("voided_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  sourceContract Contract @relation(fields: [sourceContractId], references: [id], onDelete: Restrict)
+  sourceInvoice Invoice @relation("CreditSourceInvoice", fields: [sourceInvoiceId], references: [id], onDelete: Restrict)
+  redeemedInvoice Invoice? @relation("CreditRedeemedInvoice", fields: [redeemedInvoiceId], references: [id], onDelete: SetNull)
+  creditRule CreditRule @relation(fields: [creditRuleId], references: [id], onDelete: Restrict)
+  @@unique([sourceContractId])
+  @@unique([sourceInvoiceId])
+  @@index([organizationId, expiresAt])
+  @@map("contract_credit")
+}
+
+/// Review states, transitions, comment types, phrase list, and limits are rows. The app does not keep a second copy.
+/// A consult offering (the free consult). Price, per-client limit and wording are data.
+model ConsultOffering {
+  code String @id
+  label String
+  description String
+  engagement EngagementKind
+  pricingModel PricingModel @map("pricing_model")
+  amountMinor Int @map("amount_minor")
+  currency String
+  durationMinutes Int @map("duration_minutes")
+  perClientLimit Int? @map("per_client_limit")
+  limitScope String @default("organization") @map("limit_scope")
+  proposalTitleTemplate String @map("proposal_title_template")
+  limitMessage String @map("limit_message")
+  active Boolean @default(true)
+  sortOrder Int @default(0) @map("sort_order")
+  @@map("consult_offering")
+}
+
+/// One consult request. scheduledAt and bookingReference are reserved for a later calendar booking component.
+model ConsultIntake {
+  id String @id @default(uuid()) @db.Uuid
+  offeringCode String @map("offering_code")
+  proposalId String @unique @map("proposal_id") @db.Uuid
+  organizationId String? @map("organization_id") @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  topic String
+  details String?
+  scheduledAt DateTime? @map("scheduled_at")
+  bookingReference String? @map("booking_reference")
+  createdAt DateTime @default(now()) @map("created_at")
+  @@index([offeringCode, organizationId])
+  @@index([offeringCode, userId])
+  @@map("consult_intake")
+}
+model ProposalReviewStatus {
+  recordStatus RecordStatus? @map("record_status")
+  code String @id
+  sortOrder Int @map("sort_order")
+  clientLabel String @map("client_label")
+  staffLabel String @map("staff_label")
+  terminal Boolean @default(false)
+  clientEditable Boolean @default(false) @map("client_editable")
+  @@map("proposal_review_status")
+}
+
+model ProposalReviewTransition {
+  id String @id @default(uuid()) @db.Uuid
+  fromStatus String @map("from_status")
+  toStatus String @map("to_status")
+  actorRole String @map("actor_role")
+  action String
+  label String
+  requiresReason Boolean @default(false) @map("requires_reason")
+  requiresComment Boolean @default(false) @map("requires_comment")
+  snapshots Boolean @default(false)
+  locksVersion Boolean @default(false) @map("locks_version")
+  clearsApprovedVersion Boolean @default(false) @map("clears_approved_version")
+  blockedByOpenFlags Boolean @default(false) @map("blocked_by_open_flags")
+  runsUnboundedCheck Boolean @default(false) @map("runs_unbounded_check")
+  @@unique([fromStatus, toStatus, actorRole])
+  @@index([fromStatus, actorRole])
+  @@map("proposal_review_transition")
+}
+
+model ProposalReviewCommentType {
+  code String @id
+  blocksApproval Boolean @default(false) @map("blocks_approval")
+  @@map("proposal_review_comment_type")
+}
+
+model ProposalReviewVisibility {
+  code String @id
+  @@map("proposal_review_visibility")
+}
+
+model ProposalReviewCommentStatus {
+  code String @id
+  open Boolean @default(false)
+  @@map("proposal_review_comment_status")
+}
+
+model ProposalReviewReasonCode {
+  code String @id
+  label String
+  appliesTo String @map("applies_to")
+  @@map("proposal_review_reason_code")
+}
+
+model ProposalReviewPhrase {
+  id String @id @default(uuid()) @db.Uuid
+  phrase String @unique
+  @@map("proposal_review_phrase")
+}
+
+model ProposalReviewCheck {
+  code String @id
+  kind String
+  enabled Boolean @default(true)
+  @@map("proposal_review_check")
+}
+
+model ProposalReviewLimit {
+  code String @id
+  value Int
+  @@map("proposal_review_limit")
+}
+
+model ProposalReviewFlagKind {
+  code String @id
+  blocksApproval Boolean @default(true) @map("blocks_approval")
+  allowedRoles String @map("allowed_roles")
+  @@map("proposal_review_flag_kind")
+}
+
+model ProposalVersion {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  number Int
+  snapshot Json
+  locked Boolean @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  createdById String? @map("created_by_id") @db.Uuid
+  reason String?
+  proposal Proposal @relation("ProposalVersions", fields: [proposalId], references: [id], onDelete: Cascade)
+  approvedFor Proposal[] @relation("ApprovedProposalVersion")
+  contracts Contract[]
+  esignRequests ContractEsignRequest[]
+  lockedNodes ProposalNode[]
+  @@unique([proposalId, number])
+  @@index([proposalId, number])
+  @@map("proposal_version")
+}
+
+model ProposalReviewComment {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  parentId String? @map("parent_id") @db.Uuid
+  targetKind String @map("target_kind")
+  targetId String? @map("target_id")
+  typeCode String @map("type_code")
+  status String @default("open")
+  visibility String
+  authorRole String @map("author_role")
+  authorId String? @map("author_id") @db.Uuid
+  body String
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  parent ProposalReviewComment? @relation("ReviewCommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies ProposalReviewComment[] @relation("ReviewCommentThread")
+  @@index([proposalId, status])
+  @@map("proposal_review_comment")
+}
+
+model ProposalReviewFlag {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  targetKind String @map("target_kind")
+  targetId String? @map("target_id")
+  kind String
+  reason String
+  status String @default("open")
+  visibility String
+  authorRole String @map("author_role")
+  authorId String? @map("author_id") @db.Uuid
+  blocksApproval Boolean @map("blocks_approval")
+  automatic Boolean @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, status])
+  @@map("proposal_review_flag")
+}
+
+model ProposalReviewEvent {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  actorId String? @map("actor_id") @db.Uuid
+  actorRole String @map("actor_role")
+  fromStatus String @map("from_status")
+  toStatus String @map("to_status")
+  reasonCode String? @map("reason_code")
+  reasonText String? @map("reason_text")
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, createdAt])
+  @@map("proposal_review_event")
+}
+
+model ProposalReviewMeeting {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @unique @map("proposal_id") @db.Uuid
+  scheduledAt DateTime @map("scheduled_at")
+  link String?
+  notes String?
+  createdById String? @map("created_by_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@map("proposal_review_meeting")
+}
+
+model ProposalNodeState {
+  code String @id
+  sortOrder Int @map("sort_order")
+  clientLabel String @map("client_label")
+  completionWeight Int @map("completion_weight")
+  reopensDownstream Boolean @default(false) @map("reopens_downstream")
+  isReopenTarget Boolean @default(false) @map("is_reopen_target")
+  isLock Boolean @default(false) @map("is_lock")
+  @@map("proposal_node_state")
+}
+
+model ProposalNodeTemplate {
+  key String @id
+  kind String
+  title String
+  clientLabel String @map("client_label")
+  sortOrder Int @map("sort_order")
+  parentKey String? @map("parent_key")
+  templates ProposalTemplateNode[]
+  library ProposalSectionLibrary?
+  samples ProposalTemplateSample[]
+  @@map("proposal_node_template")
+}
+
+model ProposalSectionSpec {
+  nodeKey String @id @map("node_key")
+  guidance String
+  maxChars Int @map("max_chars")
+  writtenState String @map("written_state")
+  @@map("proposal_section_spec")
+}
+
+model ProposalNodeEdgeTemplate {
+  id String @id @default(uuid()) @db.Uuid
+  fromKey String @map("from_key")
+  toKey String @map("to_key")
+  @@unique([fromKey, toKey])
+  @@map("proposal_node_edge_template")
+}
+
+model ProposalCompletionCopy {
+  code String @id
+  template String
+  @@map("proposal_completion_copy")
+}
+
+model ProposalParkMode {
+  code String @id
+  clientLabel String @map("client_label")
+  reopens Boolean @default(false)
+  @@map("proposal_park_mode")
+}
+
+model ProposalNode {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  key String
+  kind String
+  title String
+  clientLabel String @map("client_label")
+  stateCode String @map("state_code")
+  body Json @default("{}")
+  lockedVersionId String? @map("locked_version_id") @db.Uuid
+  sortOrder Int @map("sort_order")
+  parentKey String? @map("parent_key")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  lockedVersion ProposalVersion? @relation(fields: [lockedVersionId], references: [id], onDelete: SetNull)
+  edgesOut ProposalNodeEdge[] @relation("EdgeFrom")
+  edgesIn ProposalNodeEdge[] @relation("EdgeTo")
+  @@unique([proposalId, key])
+  @@index([proposalId, stateCode])
+  @@map("proposal_node")
+}
+
+model ProposalNodeEdge {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  fromNodeId String @map("from_node_id") @db.Uuid
+  toNodeId String @map("to_node_id") @db.Uuid
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  fromNode ProposalNode @relation("EdgeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode ProposalNode @relation("EdgeTo", fields: [toNodeId], references: [id], onDelete: Cascade)
+  @@unique([fromNodeId, toNodeId])
+  @@index([proposalId])
+  @@map("proposal_node_edge")
+}
+
+model ProposalCompletionEvent {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  percentBefore Int @map("percent_before")
+  percentAfter Int @map("percent_after")
+  reason String
+  actorId String? @map("actor_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, createdAt])
+  @@map("proposal_completion_event")
+}
+
+/// Intake items that are outside the current proposal, kept for a follow-up proposal.
+model ProposalIntakePark {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  summary String
+  actorId String? @map("actor_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, createdAt])
+  @@map("proposal_intake_park")
+}
+
+model ProposalParkedChange {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @map("proposal_id") @db.Uuid
+  nodeKey String @map("node_key")
+  summary String
+  mode String
+  swapSummary String? @map("swap_summary")
+  actorId String? @map("actor_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  @@index([proposalId, createdAt])
+  @@map("proposal_parked_change")
+}
+
+/// Pricing model a duplicated proposal takes when its engagement changes.
+model EngagementPricingModel {
+  engagement EngagementKind @id
+  pricingModel PricingModel @map("pricing_model")
+  pendingPriceMessage String @map("pending_price_message")
+  @@map("engagement_pricing_model")
+}
+
+/// Which proposal a copy was made from. FKs live in SQL only.
+model ProposalLineage {
+  id String @id @default(uuid()) @db.Uuid
+  proposalId String @unique @map("proposal_id") @db.Uuid
+  sourceProposalId String? @map("source_proposal_id") @db.Uuid
+  reason String @default("")
+  engagementChanged Boolean @default(false) @map("engagement_changed")
+  actorUserId String? @map("actor_user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  @@index([sourceProposalId])
+  @@map("proposal_lineage")
+}
+
+/// Membership roles an admin may assign; default_for_new_member picks the role when none is given.
+model MembershipRoleOption {
+  role                Role    @id
+  label               String
+  assignable          Boolean @default(true)
+  defaultForNewMember Boolean @default(false) @map("default_for_new_member")
+  sortOrder           Int     @default(0) @map("sort_order")
+
+  @@map("membership_role_option")
+}
+
+/// Named token scope bundles, e.g. 'client', used by POST /admin/tokens { preset }.
+model ScopePreset {
+  code      String   @id
+  label     String
+  scopes    String[]
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0) @map("sort_order")
+
+  @@map("scope_preset")
+}
+
+/// Progress screen groups (Locked, Done, Reopened, Needs your input, In progress). settled counts toward "N of M parts settled".
+model ProposalProgressGroup {
+  code             String  @id
+  clientLabel      String  @map("client_label")
+  sortOrder        Int     @map("sort_order")
+  settled          Boolean @default(false)
+  toDiscuss        Boolean @default(false) @map("to_discuss")
+  nextStepPriority Int?    @map("next_step_priority")
+  whatsLeft        String  @map("whats_left")
+  nextStep         String  @map("next_step")
+
+  @@map("proposal_progress_group")
+}
+
+/// Maps each completion node state to a progress group. FKs live in SQL only.
+model ProposalProgressStateGroup {
+  stateCode String @id @map("state_code")
+  groupCode String @map("group_code")
+
+  @@map("proposal_progress_state_group")
+}
+
+/// Qualitative phrase thresholds: the highest min_percent at or below the weighted percent wins.
+model ProposalProgressPhrase {
+  code       String @id
+  minPercent Int    @map("min_percent")
+  phrase     String
+
+  @@map("proposal_progress_phrase")
+}
+
+model ProposalProgressCopy {
+  code     String @id
+  template String
+
+  @@map("proposal_progress_copy")
+}
+
+/// Last progress snapshot each viewer saw, for the "since your last visit" delta. FKs live in SQL only.
+model ProposalProgressView {
+  id         String   @id @default(uuid()) @db.Uuid
+  proposalId String   @map("proposal_id") @db.Uuid
+  viewerId   String   @map("viewer_id") @db.Uuid
+  percent    Int
+  states     Json     @default("{}")
+  seenAt     DateTime @default(now()) @map("seen_at")
+
+  @@unique([proposalId, viewerId])
+  @@map("proposal_progress_view")
+}
+
+/// Part resolutions besides agreeing: unsure (talk to a human), staff decides, out of scope.
+model ProposalPartResolution {
+  stateCode    String  @id @map("state_code")
+  clientLabel  String  @map("client_label")
+  sortOrder    Int     @map("sort_order")
+  clientCan    Boolean @default(true) @map("client_can")
+  agentCan     Boolean @default(true) @map("agent_can")
+  flagsForCall Boolean @default(false) @map("flags_for_call")
+
+  @@map("proposal_part_resolution")
+}
+
+/// Why a call with a human is recommended; turn_threshold guides "stuck after N turns".
+model ProposalHandoffReason {
+  code          String  @id
+  clientLabel   String  @map("client_label")
+  sortOrder     Int     @map("sort_order")
+  turnThreshold Int?    @map("turn_threshold")
+  automatic     Boolean @default(false)
+
+  @@map("proposal_handoff_reason")
+}
+
+/// A recommendation to hand the proposal to a human. FKs live in SQL only.
+model ProposalHandoff {
+  id         String    @id @default(uuid()) @db.Uuid
+  proposalId String    @map("proposal_id") @db.Uuid
+  reasonCode String    @map("reason_code")
+  note       String?
+  actorId    String?   @map("actor_id") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  clearedAt  DateTime? @map("cleared_at")
+
+  @@index([proposalId])
+  @@map("proposal_handoff")
+}
+
+// Guidance playbook (Approach A, migration 0033). Config tables are rows; FKs live in SQL only.
+
+/// Signals computed each agent turn that rule conditions read.
+model GuidanceSignalDef {
+  key             String  @id
+  label           String
+  description     String
+  valueType       String  @map("value_type")
+  computationHint String  @map("computation_hint")
+  sortOrder       Int     @default(0) @map("sort_order")
+  enabled         Boolean @default(true)
+
+  @@map("guidance_signal_def")
+}
+
+/// Moves the agent can be guided toward.
+model GuidanceMove {
+  key         String  @id
+  label       String
+  description String
+  sortOrder   Int     @default(0) @map("sort_order")
+  enabled     Boolean @default(true)
+
+  @@map("guidance_move")
+}
+
+/// Session outcome codes; polarity (-1/0/1) feeds rule scoring.
+model GuidanceOutcomeCode {
+  code        String  @id
+  label       String
+  description String
+  polarity    Int     @default(0)
+  terminal    Boolean @default(false)
+  sortOrder   Int     @default(0) @map("sort_order")
+
+  @@map("guidance_outcome_code")
+}
+
+/// A playbook rule: when condition ({all:[{signal,op,value}]}) holds on trigger, suggest a move.
+model GuidanceRule {
+  id            String   @id @default(uuid()) @db.Uuid
+  key           String   @unique
+  name          String
+  enabled       Boolean  @default(true)
+  priority      Int      @default(100)
+  baseWeight    Float    @default(1) @map("base_weight")
+  learnedWeight Float?   @map("learned_weight")
+  trigger       String   @default("turn")
+  condition     Json
+  suggestedMove String   @map("suggested_move")
+  clientPhrase  String   @map("client_phrase")
+  staffNote     String?  @map("staff_note")
+  version       Int      @default(1)
+  createdBy     String?  @map("created_by") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([trigger, enabled])
+  @@map("guidance_rule")
+}
+
+/// One agent turn: signal snapshot, rules fired, move chosen, completion before/after.
+model GuidanceSessionEvent {
+  id               String   @id @default(uuid()) @db.Uuid
+  proposalId       String   @map("proposal_id") @db.Uuid
+  sessionId        String   @map("session_id")
+  turnIndex        Int      @map("turn_index")
+  trigger          String   @default("turn")
+  signals          Json     @default("{}")
+  firedRuleIds     String[] @default([]) @map("fired_rule_ids") @db.Uuid
+  chosenMove       String?  @map("chosen_move")
+  actionTaken      String?  @map("action_taken")
+  completionBefore Int?     @map("completion_before")
+  completionAfter  Int?     @map("completion_after")
+  /// Completion, node count, and states at the start of this session. Set on the first event.
+  sessionBaseline  Json?    @map("session_baseline")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@unique([sessionId, turnIndex])
+  @@index([proposalId, createdAt])
+  @@map("guidance_session_event")
+}
+
+/// What happened in a session (optionally tied to the event that led to it).
+model GuidanceOutcome {
+  id          String   @id @default(uuid()) @db.Uuid
+  proposalId  String   @map("proposal_id") @db.Uuid
+  sessionId   String?  @map("session_id")
+  outcomeCode String   @map("outcome_code")
+  eventId     String?  @map("event_id") @db.Uuid
+  note        String?
+  occurredAt  DateTime @default(now()) @map("occurred_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([proposalId])
+  @@index([sessionId])
+  @@index([outcomeCode, occurredAt])
+  @@map("guidance_outcome")
+}
+
+/// Nightly per-rule score for a period.
+model GuidanceRuleScore {
+  id               String   @id @default(uuid()) @db.Uuid
+  ruleId           String   @map("rule_id") @db.Uuid
+  period           String
+  fires            Int      @default(0)
+  positiveOutcomes Int      @default(0) @map("positive_outcomes")
+  negativeOutcomes Int      @default(0) @map("negative_outcomes")
+  computedWeight   Float    @map("computed_weight")
+  /// JSON evidence for auditing: counts and attribution summaries used to compute the row.
+  evidence         Json     @default("{}")
+  computedAt       DateTime @default(now()) @map("computed_at")
+
+  @@unique([ruleId, period])
+  @@map("guidance_rule_score")
+}
+
+/// How many moves one turn injects, and how long a follow-up tool may stamp an action on that turn.
+model GuidanceSetting {
+  key   String  @id
+  value Int
+  note  String?
+
+  @@map("guidance_setting")
+}
+
+/// Staff good/bad marking of a session or event; seeds the Approach B case library.
+model GuidanceFeedback {
+  id         String   @id @default(uuid()) @db.Uuid
+  proposalId String   @map("proposal_id") @db.Uuid
+  sessionId  String?  @map("session_id")
+  eventId    String?  @map("event_id") @db.Uuid
+  rating     String
+  note       String?
+  staffId    String?  @map("staff_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([proposalId])
+  @@index([eventId])
+  @@index([rating, createdAt])
+  @@map("guidance_feedback")
+}
+
+/// Staff feedback ratings (good, bad, ...); polarity carries into cases made from them.
+model GuidanceFeedbackRating {
+  code      String @id
+  label     String
+  polarity  Int
+  sortOrder Int    @default(0) @map("sort_order")
+
+  @@map("guidance_feedback_rating")
+}
+
+/// Case lifecycle; only statuses with agentVisible are returned to the agent.
+model GuidanceCaseStatus {
+  code         String  @id
+  label        String
+  agentVisible Boolean @default(false) @map("agent_visible")
+  sortOrder    Int     @default(0) @map("sort_order")
+
+  @@map("guidance_case_status")
+}
+
+/// Approach B case library: a staff-curated example of a situation, what the agent did, and the lesson.
+model GuidanceCase {
+  id           String   @id @default(uuid()) @db.Uuid
+  key          String   @unique
+  title        String
+  situation    String
+  signals      Json     @default("{}")
+  move         String?
+  clientPhrase String?  @map("client_phrase")
+  lesson       String
+  polarity     Int      @default(0)
+  statusCode   String   @default("draft") @map("status_code")
+  tags         String[] @default([])
+  proposalId   String?  @map("proposal_id") @db.Uuid
+  eventId      String?  @map("event_id") @db.Uuid
+  feedbackId   String?  @unique @map("feedback_id") @db.Uuid
+  createdBy    String?  @map("created_by") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([statusCode])
+  @@map("guidance_case")
+}
+
+model AgentTrace {
+  id String @id @default(uuid()) @db.Uuid
+  occurredAt DateTime @default(now()) @map("occurred_at")
+  mcpClientId String? @map("mcp_client_id") @db.Uuid
+  tokenId String? @map("token_id") @db.Uuid
+  userId String? @map("user_id") @db.Uuid
+  organizationId String? @map("organization_id") @db.Uuid
+  agentName String? @map("agent_name")
+  sessionRef String? @map("session_ref")
+  toolName String @map("tool_name")
+  input Json @default("{}")
+  output Json?
+  isError Boolean @default(false) @map("is_error")
+  errorMessage String? @map("error_message")
+  durationMs Int @map("duration_ms")
+  @@index([occurredAt(sort: Desc)])
+  @@index([toolName, occurredAt(sort: Desc)])
+  @@index([mcpClientId, occurredAt(sort: Desc)])
+  @@map("agent_trace")
+}
+
+model AgentTraceRedaction {
+  pattern String @id
+  active Boolean @default(true)
+  @@map("agent_trace_redaction")
+}
+
+model AgentTraceSetting {
+  key String @id
+  value Int
+  @@map("agent_trace_setting")
+}
+
+model TryMeSetting {
+  code  String  @id
+  value Int
+  note  String?
+
+  @@map("try_me_setting")
+}
+
+model TryMe {
+  code        String         @id
+  title       String
+  description String
+  sort        Int            @default(100)
+  active      Boolean        @default(true)
+  tasks       TryMeTask[]
+  sessions    TryMeSession[]
+
+  @@map("try_me")
+}
+
+model TryMeTask {
+  id        String             @id @default(uuid()) @db.Uuid
+  tryMeCode String             @map("try_me_code")
+  seq       Int
+  title     String
+  narration String
+  active    Boolean            @default(true)
+  tryMe     TryMe              @relation(fields: [tryMeCode], references: [code], onDelete: Cascade)
+  calls     TryMeTaskCall[]
+  runs      TryMeSessionCall[]
+
+  @@unique([tryMeCode, seq], map: "try_me_task_plan_seq_key")
+  @@map("try_me_task")
+}
+
+model TryMeTaskCall {
+  id        String             @id @default(uuid()) @db.Uuid
+  taskId    String             @map("task_id") @db.Uuid
+  seq       Int
+  toolName  String             @map("tool_name")
+  arguments Json               @default("{}")
+  capture   Json               @default("{}")
+  expect    String             @default("ok")
+  note      String?
+  active    Boolean            @default(true)
+  task      TryMeTask          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  runs      TryMeSessionCall[]
+
+  @@unique([taskId, seq], map: "try_me_task_call_task_seq_key")
+  @@map("try_me_task_call")
+}
+
+model TryMeSession {
+  id             String             @id @default(uuid()) @db.Uuid
+  tryMeCode      String             @map("try_me_code")
+  status         String             @default("running")
+  nextTaskSeq    Int?               @map("next_task_seq")
+  vars           Json               @default("{}")
+  ipHash         String             @map("ip_hash")
+  organizationId String?            @map("organization_id") @db.Uuid
+  userId         String?            @map("user_id") @db.Uuid
+  mcpClientId    String?            @map("mcp_client_id") @db.Uuid
+  tokenId        String?            @map("token_id") @db.Uuid
+  proposalId     String?            @map("proposal_id") @db.Uuid
+  errorMessage   String?            @map("error_message")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  finishedAt     DateTime?          @map("finished_at") @db.Timestamptz(6)
+  expiresAt      DateTime           @map("expires_at") @db.Timestamptz(6)
+  purgedAt       DateTime?          @map("purged_at") @db.Timestamptz(6)
+  tryMe          TryMe              @relation(fields: [tryMeCode], references: [code])
+  calls          TryMeSessionCall[]
+
+  @@index([ipHash, createdAt], map: "try_me_session_ip_created_idx")
+  @@map("try_me_session")
+}
+
+model TryMeSessionCall {
+  id           String        @id @default(uuid()) @db.Uuid
+  sessionId    String        @map("session_id") @db.Uuid
+  taskId       String        @map("task_id") @db.Uuid
+  callId       String        @map("call_id") @db.Uuid
+  status       String        @default("pending")
+  summary      String?
+  durationMs   Int?          @map("duration_ms")
+  startedAt    DateTime?     @map("started_at") @db.Timestamptz(6)
+  finishedAt   DateTime?     @map("finished_at") @db.Timestamptz(6)
+  agentTraceId String?       @map("agent_trace_id") @db.Uuid
+  result       Json?
+  session      TryMeSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  task         TryMeTask     @relation(fields: [taskId], references: [id])
+  call         TryMeTaskCall @relation(fields: [callId], references: [id])
+
+  @@unique([sessionId, callId], map: "try_me_session_call_key")
+  @@map("try_me_session_call")
+}
+
+model ProposalReviewRule {
+  code       String  @id
+  nodeKey    String  @map("node_key")
+  check      String
+  fieldPath  String? @map("field_path")
+  minChars   Int?    @map("min_chars")
+  minItems   Int?    @map("min_items")
+  pattern    String?
+  severity   String
+  weight     Int
+  message    String
+  suggestion String
+  sort       Int     @default(0)
+  active     Boolean @default(true)
+  templateCode String? @map("template_code")
+  template   ProposalTemplate? @relation(fields: [templateCode], references: [code], onDelete: Cascade)
+
+  @@map("proposal_review_rule")
+}
+
+model ProposalTemplate {
+  code String @id
+  name String
+  description String
+  sortOrder Int @map("sort_order")
+  active Boolean @default(true)
+  suggestedPricingModel String? @map("suggested_pricing_model")
+  outline Json @default("{}")
+  nodes ProposalTemplateNode[]
+  proposals Proposal[]
+  reviewRules ProposalReviewRule[]
+  samples ProposalTemplateSample[]
+  options ProposalTemplateOption[]
+  @@map("proposal_template")
+}
+model ProposalTemplateSample {
+  templateCode String @map("template_code")
+  nodeKey String @map("node_key")
+  content Json
+  template ProposalTemplate @relation(fields: [templateCode], references: [code], onDelete: Cascade)
+  node ProposalNodeTemplate @relation(fields: [nodeKey], references: [key], onDelete: Cascade)
+  @@id([templateCode, nodeKey])
+  @@map("proposal_template_sample")
+}
+model ProposalTemplateOption {
+  templateCode String @map("template_code")
+  code String
+  sortOrder Int @map("sort_order")
+  label String
+  description String
+  selection String @default("optional")
+  template ProposalTemplate @relation(fields: [templateCode], references: [code], onDelete: Cascade)
+  @@id([templateCode, code])
+  @@map("proposal_template_option")
+}
+
+model ProposalTemplateNode {
+  templateCode String @map("template_code")
+  nodeKey String @map("node_key")
+  sortOrder Int @map("sort_order")
+  parentKey String? @map("parent_key")
+  template ProposalTemplate @relation(fields: [templateCode], references: [code], onDelete: Cascade)
+  node ProposalNodeTemplate @relation(fields: [nodeKey], references: [key], onDelete: Restrict)
+  @@id([templateCode, nodeKey])
+  @@map("proposal_template_node")
+}
+
+model TryMeExercise {
+  code String @id
+  sort Int @default(0)
+  title String
+  goal String
+  prompt String
+  active Boolean @default(true)
+  tools TryMeExerciseTool[]
+  @@map("try_me_exercise")
+}
+
+model TryMeExerciseTool {
+  exerciseCode String @map("exercise_code")
+  toolName String @map("tool_name")
+  exercise TryMeExercise @relation(fields: [exerciseCode], references: [code], onDelete: Cascade)
+  @@id([exerciseCode, toolName])
+  @@map("try_me_exercise_tool")
+}
+
+model ProposalSectionLibrary {
+  nodeKey String @id @map("node_key")
+  category String
+  description String
+  sortOrder Int @default(0) @map("sort_order")
+  active Boolean @default(true)
+  node ProposalNodeTemplate @relation(fields: [nodeKey], references: [key], onDelete: Cascade)
+  @@map("proposal_section_library")
+}
+
+model McpTokenSetting {
+  code  String  @id
+  value Int
+  note  String?
+
+  @@map("mcp_token_setting")
+}
+
+/// External e-signature provider request (SignWell, later BoldSign, etc). Test-mode only unless UNWH_ESIGN_LIVE=1.
+model ContractEsignRequest {
+  id String @id @default(uuid()) @db.Uuid
+  contractId String @map("contract_id") @db.Uuid
+  proposalVersionId String @map("proposal_version_id") @db.Uuid
+  provider String
+  providerDocumentId String @map("provider_document_id")
+  uniqueKey String @unique @map("unique_key")
+  status String @default("created")
+  providerStatus Json @default("{}") @map("provider_status")
+  testMode Boolean @default(true) @map("test_mode")
+  completedAt DateTime? @map("completed_at")
+  cancelledAt DateTime? @map("cancelled_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  proposalVersion ProposalVersion @relation(fields: [proposalVersionId], references: [id], onDelete: Restrict)
+  artifacts ContractEsignArtifact[]
+
+  @@unique([contractId, proposalVersionId])
+  @@index([provider, providerDocumentId])
+  @@index([status, updatedAt])
+  @@map("contract_esign_request")
+}
+
+/// Immutable artifacts for a completed e-sign request (signed PDF + audit trail/certificate).
+model ContractEsignArtifact {
+  id String @id @default(uuid()) @db.Uuid
+  requestId String @map("request_id") @db.Uuid
+  kind String
+  sha256 String
+  bytes Bytes
+  createdAt DateTime @default(now()) @map("created_at")
+
+  request ContractEsignRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@unique([requestId, kind])
+  @@index([requestId, createdAt])
+  @@map("contract_esign_artifact")
+}

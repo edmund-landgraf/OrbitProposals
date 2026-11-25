@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UnwhelmNet status</title>
+<meta name="robots" content="noindex" />
+<style>
+  body { font-family: Inter, system-ui, sans-serif; background: #0f0a1e; color: #ece9f5; margin: 0; padding: 3rem 1.25rem; }
+  main { max-width: 40rem; margin: 0 auto; }
+  h1 { font-family: Sora, Inter, sans-serif; font-size: 1.6rem; margin: 0 0 1.5rem; }
+  .banner { padding: 1rem 1.25rem; border-radius: 10px; font-weight: 600; margin-bottom: 1.5rem; background: #2a2440; }
+  .ok { background: #12391f; color: #9ef0b4; } .degraded { background: #4a1620; color: #ffb3bf; }
+  table { width: 100%; border-collapse: collapse; } td { padding: .6rem 0; border-bottom: 1px solid #2a2440; }
+  td:last-child { text-align: right; font-family: ui-monospace, monospace; }
+  small { color: #a49fb8; display: block; margin-top: 1.25rem; } a { color: #c4b5fd; }
+</style>
+</head>
+<body>
+<main>
+  <h1>UnwhelmNet status</h1>
+  <div id="banner" class="banner">Checking&hellip;</div>
+  <table><tbody id="checks"></tbody></table>
+  <small id="meta"></small>
+  <small><a href="/">unwhelm.net</a> &middot; <a href="/try">Try the proposal agent</a></small>
+</main>
+<script>
+  const label = { database: "Database", api: "API" };
+  async function load() {
+    const banner = document.getElementById("banner"), rows = document.getElementById("checks"), meta = document.getElementById("meta");
+    try {
+      const response = await fetch("/api/v1/status", { cache: "no-store" });
+      const { entity } = await response.json();
+      const ok = entity.status === "ok";
+      banner.className = "banner " + (ok ? "ok" : "degraded");
+      banner.textContent = ok ? "All systems operational" : "Some systems are degraded";
+      rows.replaceChildren(...[{ name: "api", ok: true, ms: null }, ...entity.checks].map((c) => {
+        const tr = document.createElement("tr");
+        const name = document.createElement("td"); name.textContent = label[c.name] || c.name;
+        const state = document.createElement("td"); state.textContent = (c.ok ? "Operational" : "Down") + (c.ms != null ? " \u00b7 " + c.ms + " ms" : "");
+        tr.append(name, state); return tr;
+      }));
+      meta.textContent = "Version " + entity.version + " \u00b7 up " + Math.round(entity.uptimeSeconds / 60) + " min \u00b7 checked " + new Date(entity.checkedAt).toLocaleTimeString();
+    } catch {
+      banner.className = "banner degraded"; banner.textContent = "The API is not responding"; rows.replaceChildren(); meta.textContent = "";
+    }
+  }
+  load(); setInterval(load, 30000);
+</script>
+</body>
+</html>

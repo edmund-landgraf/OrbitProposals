@@ -1,0 +1,1251 @@
+{
+  "repository": "edmund-landgraf/UnwhelmNet20",
+  "sourceFiles": [
+    "unwh-mcp/src/createServer.ts",
+    "unwh-mcp/src/toolAccess.ts",
+    "prisma/schema.prisma"
+  ],
+  "count": 155,
+  "tools": [
+    {
+      "group": "Contract",
+      "name": "unw_accept_proposal",
+      "description": "Accept the locked approved proposal, creating a contract and initial invoice if applicable.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Review",
+      "name": "unw_add_approval_step",
+      "description": "Add the next person to a proposal approval chain.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal templates & sections",
+      "name": "unw_add_proposal_section",
+      "description": "Add a reusable section as a new open proposal part.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_add_requirement_evidence",
+      "description": "Attaches a section, attachment, library item, or note as evidence for a requirement. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_add_review_comment",
+      "description": "Add a review comment or reply, with internal or client visibility.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_add_review_flag",
+      "description": "Flag an unbounded item that blocks approval until addressed.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_add_org_member",
+      "description": "Create or change a user's organization membership and role.",
+      "scope": "admin",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_create_org",
+      "description": "Create a client organization.",
+      "scope": "admin",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_create_user",
+      "description": "Create a user, optionally connecting them to an organization.",
+      "scope": "admin",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_delete_mcp_client",
+      "description": "Delete a registered MCP client and revoke all tokens it issued.",
+      "scope": "admin",
+      "operation": "Admin",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_delete_proposal",
+      "description": "Delete an eligible proposal and dependent draft data with an audit entry.",
+      "scope": "admin",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_list_orgs",
+      "description": "List organizations and their members.",
+      "scope": "admin",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_list_scope_presets",
+      "description": "List predefined API token scope bundles.",
+      "scope": "admin",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_list_tokens",
+      "description": "List issued API/MCP tokens.",
+      "scope": "admin",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_list_users",
+      "description": "List users, organizations, and memberships.",
+      "scope": "admin",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_mint_magic_link",
+      "description": "Create a time-limited user sign-in link.",
+      "scope": "admin",
+      "operation": "Admin",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_mint_token",
+      "description": "Issue a token using explicit scopes or a scope preset.",
+      "scope": "admin",
+      "operation": "Admin",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_prune_mcp_clients",
+      "description": "Remove unused self-registered MCP clients older than the configured TTL; keep staff-created and demo clients.",
+      "scope": "admin",
+      "operation": "Admin",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Administration",
+      "name": "unw_admin_revoke_token",
+      "description": "Revoke an issued token.",
+      "scope": "admin",
+      "operation": "Admin",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_agree_part",
+      "description": "Mark a drafted proposal part as agreed by the client, or move it back to drafted or open.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_analyze_rfp_requirements",
+      "description": "Reads RFP text into proposed requirements, suggests proposal sections, and flags duplicates. Nothing is approved. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_apply_credit",
+      "description": "Apply an eligible unexpired credit to an invoice; staff only.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_approve_content_library_item",
+      "description": "Approves or rejects a library version that is in review. Approval is staff-controlled and makes that version the one inserts copy. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_archive_content_library_item",
+      "description": "Archives a library item so new inserts cannot use it. History is kept. Staff only. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_assign_proposal_task",
+      "description": "Assigns a proposal-manager task to an owner with an optional section, requirement, dependency, priority, and deadline. Completing a task does not approve a section. Requires propos",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_attach_proposal_document",
+      "description": "Upload a new PDF or Markdown file onto a proposal.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_charge_invoice",
+      "description": "Charge a sent invoice through the payment processor, then mark it paid.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_compare_proposal_versions",
+      "description": "Compares two proposal versions using the existing review diff engine. Read-only. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Catalog & pricing",
+      "name": "unw_create_catalog_draft",
+      "description": "Create an editable catalog draft from the current published version.",
+      "scope": "catalog:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Conversations",
+      "name": "unw_create_chat_session",
+      "description": "Create a persisted chat session for a proposal, contract, or project manager agent.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_create_compliance_matrix",
+      "description": "Maps extracted requirements to proposal sections and evidence. A mapping is not automatically a human compliance sign-off. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_create_custom_section",
+      "description": "Create a section with its own title, guidance, and character limit.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_create_delivery_project",
+      "description": "Creates a delivery project from a signed contract. The contract and project route enforce staff and organization rules. Requires projects:write.",
+      "scope": "projects:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_create_go_no_go_assessment",
+      "description": "Creates a weighted go/no-go assessment. The score is advisory; recording a final decision is staff-controlled. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_create_invoice",
+      "description": "Create a draft invoice, subject to billing rules.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_create_pricing_model",
+      "description": "Creates a versioned proposal pricing model using server-side integer minor-unit calculations. It does not approve discounts or margins. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_create_proposal",
+      "description": "Create a proposal with scope, deliverables, milestones, engagement, and catalog-constrained pricing.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_create_scope_baseline",
+      "description": "Creates an immutable versioned scope baseline with items, assumptions, exclusions, and risks. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_decide_change_item",
+      "description": "Record an approved or declined decision on a pushback or change request.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_delete_proposal_attachment",
+      "description": "Delete one stored proposal document.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_deliver_reminders",
+      "description": "Send eligible reminders with quiet-hour, cap, retry, and duplicate protections.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_draft_proposal_section",
+      "description": "Drafts one proposal section from approved library answers that match its requirements. Unmatched requirements stay as named gaps. Nothing is invented. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_duplicate_proposal",
+      "description": "Copy a proposal into a new draft with its timeline, options, and completion structure.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_export_proposal",
+      "description": "Export a proposal in a supported format.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_export_redline",
+      "description": "Download a Word file with tracked changes between two proposal versions.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_extend_proposal_expiry",
+      "description": "Let staff extend a proposal before acceptance, within configured limits.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_extract_rfp_requirements",
+      "description": "Persists agent-confirmed requirements extracted from a proposal source document. Requirements remain unmapped until explicitly mapped through the compliance matrix. Requires propos",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_fetch_proposal_document",
+      "description": "Download a public https PDF or Markdown file onto a proposal.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_find_guidance_cases",
+      "description": "Finds staff-approved past cases that resemble this proposal's current situation: what was going on, what the agent did, the lesson, and whether it worked or should be avoided. Use them as examples, not scripts. Optional move narrows to cases about one move. Read-only; never sets hours or price. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_get_billing_schedule",
+      "description": "Read billing entries and planned charges tied to a contract.",
+      "scope": "billing:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Catalog & pricing",
+      "name": "unw_get_catalog",
+      "description": "Read the active published pricing catalog, with no special catalog scope.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Catalog & pricing",
+      "name": "unw_get_catalog_draft",
+      "description": "Read published and draft catalog data for authorized editors.",
+      "scope": "catalog:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_get_completion_tree",
+      "description": "Read proposal completion nodes, dependencies, completion percentage, and history.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_get_compliance_matrix",
+      "description": "Returns coverage, mandatory gaps, duplicate conflicts, and low-confidence requirements. Read-only. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_get_content_library_item",
+      "description": "Loads one library item and its version history. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_get_invoice",
+      "description": "Load one invoice by ID.",
+      "scope": "billing:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_get_pending_client_decisions",
+      "description": "Lists unresolved requirements, open or blocked tasks, undecided go/no-go state, and unapproved pricing that need client or staff attention. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Projects",
+      "name": "unw_get_project",
+      "description": "Load a project by ID.",
+      "scope": "projects:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_get_proposal",
+      "description": "Load a proposal by ID.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_get_proposal_attachment",
+      "description": "Return the signed-in download path for one stored proposal document.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_get_proposal_expiry",
+      "description": "Read valid-until date, expiry state, and days remaining.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_get_proposal_progress",
+      "description": "Read a client-facing progress summary and the next recommended step.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_get_proposal_status",
+      "description": "Read lifecycle and review status, version lock, and outstanding comments or flags.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_get_reminder_options",
+      "description": "List supported channels, tickler schedules, and default quiet-hour settings.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Service & audit",
+      "name": "unw_get_service_info",
+      "description": "Report MCP and API health, token scopes, and tools hidden from this caller.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_ingest_rfp",
+      "description": "Stores an RFP or other source document against a proposal. The agent may then extract confirmed requirements from it. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_insert_approved_content",
+      "description": "Copies approved, non-expired library content into one proposal section and returns its provenance. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_invite_proposal_guest",
+      "description": "Adds a coworker to the portal so they can view this proposal. Creates their sign-in account when needed. sent is false: this does not email them. They sign in with the usual email link. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_invoice_hours",
+      "description": "Generate a draft invoice for billable, uninvoiced time in a range.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_link_proposal_document",
+      "description": "Attach a PDF or Markdown document by https URL.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Service & audit",
+      "name": "unw_list_agent_traces",
+      "description": "List redacted agent tool-call traces, errors, and execution times for staff review.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_change_items",
+      "description": "List pushback deadlines, pushbacks, and change requests.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Conversations",
+      "name": "unw_list_chat_messages",
+      "description": "Read stored messages in a chat session.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Conversations",
+      "name": "unw_list_chat_sessions",
+      "description": "List chat sessions the caller can access.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_compliance_requirements",
+      "description": "Lists compliance requirements for a proposal. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Consultations",
+      "name": "unw_list_consult_intakes",
+      "description": "List consultation requests and their linked proposal IDs.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Consultations",
+      "name": "unw_list_consult_offerings",
+      "description": "List active consultation options and their configured limits and pricing.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_list_credits",
+      "description": "List an organization’s Workflow Check credits; staff only.",
+      "scope": "billing:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_list_deliveries",
+      "description": "Inspect reminder delivery attempts, channels, statuses, and errors.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_list_follow_up_queue",
+      "description": "Show proposals awaiting staff attention, ranked by configured reasons and urgency.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_list_guidance_events",
+      "description": "Lists recent guidance-playbook turns for a proposal: the signals computed, which rules fired, the suggested moves and their client phrases, and the action taken when one was recorded. Read-only. Never sets hours or price. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_list_hours",
+      "description": "List recorded time entries on a contract.",
+      "scope": "billing:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_list_invoices",
+      "description": "List invoices visible to the caller.",
+      "scope": "billing:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_list_parked",
+      "description": "List deferred change or intake items.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_list_payment_terms",
+      "description": "Read available payment terms and the default.",
+      "scope": "billing:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Projects",
+      "name": "unw_list_projects",
+      "description": "List projects visible to the caller.",
+      "scope": "projects:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_proposal_attachments",
+      "description": "List PDF and Markdown documents stored on a proposal, in display order.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_proposal_roles",
+      "description": "List project roles on a proposal, including which phases they are heaviest in.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal templates & sections",
+      "name": "unw_list_proposal_sections",
+      "description": "List the sections belonging to a proposal.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_proposal_tasks",
+      "description": "Lists proposal-manager tasks, including overdue task ids. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal templates & sections",
+      "name": "unw_list_proposal_templates",
+      "description": "List active templates, expected parts, example content, and optional packages.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_proposal_views",
+      "description": "Summarize who opened a proposal and which parts they opened.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_proposals",
+      "description": "List proposals visible to the current authenticated caller.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_list_reminders",
+      "description": "List generated reminders for expiring, waiting, or stalled proposals.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_list_review_feedback",
+      "description": "List visible review comments, flags, and review status.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal templates & sections",
+      "name": "unw_list_section_library",
+      "description": "List reusable narrative sections with guidance and length limits.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_list_tools",
+      "description": "List every tool with input names and a read, edit, or commit label.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_lock_node",
+      "description": "Lock a completion node to a proposal version.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_log_hours",
+      "description": "Record contract work hours; refuse entries exceeding a contractual cap.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_map_requirement_to_section",
+      "description": "Links a requirement to proposal sections. A mapping is not compliance sign-off. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_mark_part_unsure",
+      "description": "Mark a part for human discussion or defer it without treating it as failure.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_open_change_item",
+      "description": "Record a pushback deadline, formal pushback, or change request.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_park_change",
+      "description": "Save a requested change for phase two or a swap without disturbing locked work.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_park_item",
+      "description": "Save an intake item for a future proposal rather than expanding current scope.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_pay_invoice",
+      "description": "Record an invoice as paid; does not itself run a payment processor.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_preview_change_impact",
+      "description": "Preview which dependent parts would reopen after a change.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_preview_commitment",
+      "description": "Previews the contract terms and first invoice that accept would create. dryRun is true. It does not accept the proposal, sign a contract, or create an invoice. Requires proposals:r",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Catalog & pricing",
+      "name": "unw_publish_catalog",
+      "description": "Validate and publish a pricing version, superseding the previous version.",
+      "scope": "catalog:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_recommend_handoff",
+      "description": "Recommend a call with staff and explain why handoff is appropriate.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Review",
+      "name": "unw_record_approval",
+      "description": "Record that one approval-chain step is done.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Contract",
+      "name": "unw_release_retainage",
+      "description": "Create the invoice releasing previously withheld retainage; staff only.",
+      "scope": "contracts:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_remaining_hours",
+      "description": "Read hours allowed, used, and remaining at the catalog rate.",
+      "scope": "billing:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal templates & sections",
+      "name": "unw_remove_proposal_section",
+      "description": "Removes one section (part) from a proposal. Removing a section the proposal no longer has is a no-op, so retries are safe. Locked sections and sections with sub-parts are refused. Never sets hours or price. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_reopen_proposal",
+      "description": "Reopen an approved proposal for editing; clears the approval.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_reorder_proposal_attachments",
+      "description": "Set the display order of every document on a proposal.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal templates & sections",
+      "name": "unw_reorder_proposal_sections",
+      "description": "Reorders a proposal's sections. The listed keys move to the front in that order and the rest keep their order after them. Give parentKey to reorder sub-parts of one section; omit it for top-level parts. Returns the new order. Never sets hours or price. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_replace_proposal_attachment",
+      "description": "Replace one stored proposal document by id.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Consultations",
+      "name": "unw_request_free_consult",
+      "description": "Record a consultation request and create the linked draft proposal.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_resolve_review_comment",
+      "description": "Resolve a review comment, subject to actor permissions.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_resolve_review_flag",
+      "description": "Resolve a review flag, including automatic unbounded flags.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_resubmit_proposal",
+      "description": "Resubmit a revised proposal as the next version.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_review_decision",
+      "description": "Record staff approval, rejection, or requested changes; blocking flags prevent approval.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_review_proposal",
+      "description": "Score narrative sections against database-configured review rules; read-only.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_run_reminders",
+      "description": "Compute and optionally queue due reminders using configured rules.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_save_proposal_template",
+      "description": "Saves this proposal's sections, written text, phases, roles, and scope as an inactive template. Staff only. It does not publish the template. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_search_content_library",
+      "description": "Searches library content. Callers see approved, non-expired items in their organization or marked global. Each hit includes why it matched and its approval state. Staff may filter ",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_select_proposal_options",
+      "description": "Select prepriced options and packages without changing their prices.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Conversations",
+      "name": "unw_send_chat_message",
+      "description": "Send a message and return the persisted assistant response.",
+      "scope": "Not scope-gated in MCP listing",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_send_invoice",
+      "description": "Change a draft invoice to sent using the API rules.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_set_contact_preference",
+      "description": "Save reminder channel, destination, explicit consent, opt-out, and quiet hours.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Contract",
+      "name": "unw_set_contract_billing_terms",
+      "description": "Set payment term and retainage percentage; staff only.",
+      "scope": "contracts:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_set_phase_estimate",
+      "description": "Set a low and high hour and week estimate on existing phases.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_set_proposal_roles",
+      "description": "Replace the project roles on a proposal.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal templates & sections",
+      "name": "unw_set_proposal_template",
+      "description": "Chooses the template a proposal is built from. On a draft, a different template rebuilds the parts and keeps written text for parts that exist in both. The same template again is a no-op. Locked or non-draft proposals cannot change template. Never sets hours or price. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Reminders & follow-up",
+      "name": "unw_set_tickler",
+      "description": "Schedule, snooze, repeat, or stop proposal-completion reminders.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Contract",
+      "name": "unw_sign_contract",
+      "description": "Sign a contract and generate billing entries without duplicating them on retries.",
+      "scope": "contracts:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_sign_off_compliance",
+      "description": "Records a staff compliance sign-off. Refuses while any mandatory requirement lacks an accepted mapping. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_start_revision",
+      "description": "Start the client's revision after changes were requested.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_start_staff_review",
+      "description": "Take a proposal into staff review so a decision can be made.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_submit_content_library_item",
+      "description": "Submits the current draft version for staff review. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_submit_proposal_for_review",
+      "description": "Submit a draft for agent review and create a version snapshot.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Completion & changes",
+      "name": "unw_unlock_node",
+      "description": "Unlock a node and return dependent parts to review as needed.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Catalog & pricing",
+      "name": "unw_update_billing_schedule_line",
+      "description": "Change an installment or billing schedule line in a draft.",
+      "scope": "catalog:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_update_compliance_requirement",
+      "description": "Corrects a proposed requirement. Set confirmed when a person accepts the wording. Requires proposals:write.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Catalog & pricing",
+      "name": "unw_update_invoice_policy",
+      "description": "Change draft invoicing policies.",
+      "scope": "catalog:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Catalog & pricing",
+      "name": "unw_update_price_tier",
+      "description": "Change a price tier in a catalog draft.",
+      "scope": "catalog:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_update_proposal_section",
+      "description": "Edit proposal title, scope, timeline, pricing, or a configured narrative section.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_update_review_comment",
+      "description": "Rewrite or supersede the caller own open review comment.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_upload_proposal_part",
+      "description": "Upload one small part of a PDF or Markdown file.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_upsert_content_library_item",
+      "description": "Creates a library item or drafts a new version. An approved item stays insertable until the new version is approved. Client visibility requires a client label. Requires proposals:w",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_upsert_proposal_document",
+      "description": "Create or replace a PDF or Markdown file on a proposal by filename.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_validate_commercial_policy",
+      "description": "Validates a proposal pricing model against supplied margin and discount thresholds. Read-only; it does not approve the price. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal",
+      "name": "unw_validate_proposal_readiness",
+      "description": "Checks mandatory requirements, blocked tasks, go/no-go status, and pricing approval state before submission. Read-only. Requires proposals:read.",
+      "scope": "proposals:read",
+      "operation": "Read",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Billing & hours",
+      "name": "unw_void_invoice",
+      "description": "Void an eligible unpaid invoice.",
+      "scope": "billing:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    },
+    {
+      "group": "Proposal review",
+      "name": "unw_withdraw_proposal",
+      "description": "Withdraw a proposal on the client's behalf with a reason.",
+      "scope": "proposals:write",
+      "operation": "Write",
+      "source": "unwh-mcp/src/createServer.ts"
+    }
+  ]
+}

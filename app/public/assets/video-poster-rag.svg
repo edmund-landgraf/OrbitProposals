@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Building a local RAG application</title>
+  <desc id="desc">Technical walkthrough poster showing local retrieval augmented generation architecture.</desc>
+  <defs><pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" fill="none" stroke="#29404a" stroke-width="1" opacity=".5"/></pattern></defs>
+  <rect width="1200" height="675" fill="#101820"/><rect width="1200" height="675" fill="url(#grid)"/>
+  <circle cx="1035" cy="140" r="170" fill="#b34f27" opacity=".45"/><circle cx="1040" cy="142" r="72" fill="#006b75" opacity=".85"/>
+  <rect x="86" y="78" width="1028" height="520" rx="16" fill="none" stroke="#d8cbb9" stroke-width="2" opacity=".8"/>
+  <text x="130" y="145" fill="#9ee7de" font-family="monospace" font-size="20" font-weight="700" letter-spacing="4">UNWHELMNET / PROOF</text>
+  <text x="130" y="255" fill="#fffdf6" font-family="Arial, sans-serif" font-size="58" font-weight="700">Building a local</text>
+  <text x="130" y="320" fill="#fffdf6" font-family="Arial, sans-serif" font-size="58" font-weight="700">RAG application</text>
+  <text x="130" y="385" fill="#c8d3d2" font-family="Arial, sans-serif" font-size="26">Source ingestion, retrieval, routing, and local models.</text>
+  <g fill="none" stroke="#f7d276" stroke-width="3"><rect x="138" y="456" width="108" height="58" rx="8"/><rect x="286" y="456" width="108" height="58" rx="8"/><rect x="434" y="456" width="108" height="58" rx="8"/><path d="M246 485h40M394 485h40"/></g>
+</svg>

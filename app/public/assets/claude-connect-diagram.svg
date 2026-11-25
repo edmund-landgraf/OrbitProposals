@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1446" role="img" aria-labelledby="title desc">
+  <title id="title">Six steps to connect Claude to Unwhelm</title>
+  <desc id="desc">A numbered diagram: add a custom connector with the Unwhelm MCP URL, set sign-in options (Sign in now, Register automatically, no request headers), sign in with an email link, approve access, let read-only tools run without approval, then use Unwhelm in a Claude chat.</desc>
+  <defs>
+    <marker id="step-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#006b75"/>
+    </marker>
+  </defs>
+  <rect width="800" height="1446" fill="#fffdf6"/>
+  <text x="400" y="48" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="22" font-weight="700" fill="#0c1116">Connect Claude to Unwhelm</text>
+  <text x="400" y="76" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#3d4a4b">Six steps, from the connector URL to a working chat</text>
+
+  <!-- Step 1 -->
+  <rect x="48" y="108" width="704" height="174" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="195" r="32" fill="#006b75"/>
+  <text x="108" y="207" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">1</text>
+  <text x="168" y="168" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Add a custom connector with the URL</text>
+  <text x="168" y="204" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">In Claude, open Customize, then Connectors,</text>
+  <text x="168" y="230" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">and add a custom connector named Unwhelm.</text>
+  <text x="168" y="256" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="16" fill="#006b75">https://mcp.unwhelm.net/mcp</text>
+
+  <line x1="400" y1="282" x2="400" y2="320" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+
+  <!-- Step 2 -->
+  <rect x="48" y="330" width="704" height="174" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="417" r="32" fill="#006b75"/>
+  <text x="108" y="429" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">2</text>
+  <text x="168" y="390" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Set sign-in options</text>
+  <text x="168" y="426" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Authentication: choose <tspan font-weight="700">Sign in now</tspan>.</text>
+  <text x="168" y="452" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">OAuth client: choose <tspan font-weight="700">Register automatically</tspan>.</text>
+  <text x="168" y="478" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Request headers: leave empty. Then click Add.</text>
+
+  <line x1="400" y1="504" x2="400" y2="542" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+
+  <!-- Step 3 -->
+  <rect x="48" y="552" width="704" height="174" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="639" r="32" fill="#006b75"/>
+  <text x="108" y="651" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">3</text>
+  <text x="168" y="612" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Sign in with an email link</text>
+  <text x="168" y="648" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Claude opens Unwhelm&#8217;s sign-in page right away.</text>
+  <text x="168" y="674" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Enter your email and open the one-time link</text>
+  <text x="168" y="700" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">we send. You never paste a password into Claude.</text>
+
+  <line x1="400" y1="726" x2="400" y2="764" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+
+  <!-- Step 4 -->
+  <rect x="48" y="774" width="704" height="148" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="848" r="32" fill="#006b75"/>
+  <text x="108" y="860" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">4</text>
+  <text x="168" y="834" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Approve access</text>
+  <text x="168" y="870" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">On the consent page, review what Claude can do,</text>
+  <text x="168" y="896" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">then choose Allow.</text>
+
+  <line x1="400" y1="922" x2="400" y2="960" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+
+  <!-- Step 5 -->
+  <rect x="48" y="970" width="704" height="174" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="1057" r="32" fill="#006b75"/>
+  <text x="108" y="1069" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">5</text>
+  <text x="168" y="1030" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Let reads run without asking</text>
+  <text x="168" y="1066" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">On the connector&#8217;s Tool permissions page, change</text>
+  <text x="168" y="1092" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Read-only tools from Needs approval to allow</text>
+  <text x="168" y="1118" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">automatically. Write/delete tools can stay as they are.</text>
+
+  <line x1="400" y1="1144" x2="400" y2="1182" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+
+  <!-- Step 6 -->
+  <rect x="48" y="1192" width="704" height="174" rx="14" fill="#dff2ef" stroke="#006b75" stroke-width="2"/>
+  <circle cx="108" cy="1279" r="32" fill="#0c1116"/>
+  <text x="108" y="1291" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">6</text>
+  <text x="168" y="1252" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Use Unwhelm in chat</text>
+  <text x="168" y="1288" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">In a chat, open the + button, then Connectors,</text>
+  <text x="168" y="1314" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">and turn Unwhelm on for that conversation.</text>
+  <text x="168" y="1340" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Then ask Claude to list your proposals.</text>
+
+  <text x="400" y="1414" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#3d4a4b">Anyone can browse the catalog and draft. Saving and submitting need a signed-in account.</text>
+</svg>
