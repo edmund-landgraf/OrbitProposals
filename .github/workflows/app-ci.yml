@@ -1,0 +1,120 @@
+name: build-and-smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: unwh
+          POSTGRES_PASSWORD: unwh
+          POSTGRES_DB: unwh_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U unwh"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://unwh:unwh@localhost:5432/unwh_test
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: npm install
+      # API tests import unwh-mcp, which resolves @modelcontextprotocol/sdk
+      # from unwh-mcp/node_modules. The root install does not install that package.
+      - run: npm ci --prefix unwh-mcp
+      - run: npm run db:generate
+      # build:all = web + schemas + API (tsc -p tsconfig.api.json) + MCP, same as the VPS deploy.
+      - run: npm run build:all
+      # 0001 is a pg_dump that prisma can't apply to an empty DB; db:bootstrap applies a sanitized copy in memory, marks it applied, then runs migrate deploy.
+      - run: npm run db:bootstrap
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - run: npx tsx --test tests/api/proposalExpiry.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      # Proposal authoring, timelines, templates, duplicates, options, and exports.
+      - run: npx tsx --test tests/api/proposalAuthoringDb.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - run: npx tsx --test tests/api/proposalReviewDb.test.ts tests/api/clientOnboardingDb.test.ts tests/api/proposalProgressDb.test.ts tests/api/guidancePlaybookDb.test.ts tests/api/guidanceTurnDb.test.ts tests/api/proposalSectionsDb.test.ts tests/api/proposalTemplatesDb.test.ts tests/api/sectionLibraryDb.test.ts tests/api/starterTemplatesDb.test.ts tests/api/softwareTemplatesDb.test.ts tests/api/templateEditDb.test.ts tests/api/addSectionIdempotentDb.test.ts tests/api/guidanceCasesDb.test.ts tests/api/sectionOrderDb.test.ts tests/api/listSectionsDb.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - run: npx tsx --test tests/api/proposalReminders.test.ts tests/api/reminderDelivery.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      # Review lifecycle: approval safety, flags, changes requested, node locks, and comment targets.
+      - run: npx tsx --test tests/api/reviewLifecycleDb.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - run: npx tsx --test tests/api/apiSurface.test.ts tests/api/guidancePlaybook.test.ts tests/api/mcpBillingTools.test.ts tests/api/workflowCredit.test.ts tests/api/connectorScopes.test.ts tests/api/clientHardening.test.ts tests/api/clientContractParty.test.ts tests/api/mcpCors.test.ts tests/api/mcpPublicScopes.test.ts tests/api/mcpToolAnnotations.test.ts tests/api/mcpClientPrune.test.ts tests/api/mcpSearchFetch.test.ts tests/api/proposalReview.test.ts tests/api/completionTree.test.ts tests/api/proposalAccept.test.ts tests/api/billingTerms.test.ts tests/api/optionPackages.test.ts tests/api/proposalProgress.test.ts tests/api/proposalPartState.test.ts tests/api/proposalTimeline.test.ts tests/api/proposalRoles.test.ts tests/api/proposalWrittenState.test.ts tests/api/proposalReminders.test.ts tests/api/reminderDelivery.test.ts tests/api/admin.test.ts tests/api/proposalContract.test.ts tests/api/proposalAttachments.test.ts tests/api/chatProposalRead.test.ts tests/api/esignSignwell.test.ts tests/api/esignPandadoc.test.ts tests/api/pdfTemplates.test.ts tests/api/proposalReviewAgent.test.ts tests/api/observability.test.ts tests/api/dbRetry.test.ts tests/api/connectGuideLinks.test.ts tests/api/claudeConnectPage.test.ts tests/api/connectPages.test.ts tests/api/versionStamp.test.ts tests/api/structuredLog.test.ts tests/api/systemAuth.test.ts tests/api/reviewerLogin.test.ts tests/api/accessRequest.test.ts tests/api/mcpRefresh.test.ts tests/api/mcpAnonymous.test.ts
+
+      # The seed adds the unwhelm-local org that database.integration.test.ts checks.
+      - run: npm run db:seed
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - run: npx tsx --test tests/api/database.integration.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - run: npx tsx --test tests/api/followUpQueue.test.ts tests/api/agentTrace.test.ts tests/api/demo.test.ts tests/api/tryMeGuide.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      # Builds and submits one proposal through the API in 16 scripted steps, with no agent conversation.
+      - name: Scripted proposal run
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+          UNWH_API_PORT: '3291'
+          UNWH_SESSION_SECRET: ci-scripted-run-secret-0123456789
+          UNWH_API_URL: http://127.0.0.1:3291/api/v1
+        run: |
+          npx tsx server/index.ts > api-scripted.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:3291/api/v1/health >/dev/null && break; sleep 1; done
+          curl -sf http://127.0.0.1:3291/api/v1/status | grep -q '"status":"ok"' || { echo 'API did not start:'; cat api-scripted.log; exit 1; }
+          npm run test:scripted-proposal || { cat api-scripted.log; exit 1; }
+          kill %1 || true
+      - run: npx playwright install --with-deps chromium
+      - run: npx tsx --test tests/api/freeConsult.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - run: npm run test:smoke
+
+      - run: npx tsx --test tests/api/proposalDuplicate.test.ts
+        env:
+          UNWH_DB_TEST: '1'
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+      - name: Upload smoke-test report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-smoke-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore

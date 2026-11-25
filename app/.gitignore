@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-api/
+unwh-mcp/dist/
+packages/shapes/dist/
+.vite/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+playwright-report/
+test-results/
+
+clips/
+videos/

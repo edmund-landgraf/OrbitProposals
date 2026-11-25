@@ -1,0 +1,836 @@
+{
+  "/services": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ]
+  ],
+  "/services/integration": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/integration",
+      "Integration"
+    ]
+  ],
+  "/services/ai": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/ai",
+      "AI"
+    ]
+  ],
+  "/services/ai/agents": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/ai",
+      "AI"
+    ],
+    [
+      "/services/ai/agents",
+      "AI agents"
+    ]
+  ],
+  "/services/ai/economics": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/ai",
+      "AI"
+    ],
+    [
+      "/services/ai/economics",
+      "AI economics"
+    ]
+  ],
+  "/services/automation": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/automation",
+      "Automation"
+    ]
+  ],
+  "/services/infrastructure": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/infrastructure",
+      "Infrastructure"
+    ]
+  ],
+  "/services/web-design": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/web-design",
+      "Web design"
+    ]
+  ],
+  "/services/10x-team": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/10x-team",
+      "10x team"
+    ]
+  ],
+  "/services/agent-setup": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/agent-setup",
+      "Agent setup"
+    ]
+  ],
+  "/services/supabase": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/supabase",
+      "Supabase"
+    ]
+  ],
+  "/services/vibe-coded": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/services",
+      "Services"
+    ],
+    [
+      "/services/vibe-coded",
+      "Vibe-coded apps"
+    ]
+  ],
+  "/industries": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ]
+  ],
+  "/industries/real-estate": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ],
+    [
+      "/industries/real-estate",
+      "Real estate"
+    ]
+  ],
+  "/industries/real-estate/institutional-investors": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ],
+    [
+      "/industries/real-estate",
+      "Real estate"
+    ],
+    [
+      "/industries/real-estate/institutional-investors",
+      "Institutional investors"
+    ]
+  ],
+  "/industries/real-estate/property-managers": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ],
+    [
+      "/industries/real-estate",
+      "Real estate"
+    ],
+    [
+      "/industries/real-estate/property-managers",
+      "Property managers"
+    ]
+  ],
+  "/industries/real-estate/brokerages": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ],
+    [
+      "/industries/real-estate",
+      "Real estate"
+    ],
+    [
+      "/industries/real-estate/brokerages",
+      "Brokerages"
+    ]
+  ],
+  "/industries/legal": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ],
+    [
+      "/industries/legal",
+      "Legal"
+    ]
+  ],
+  "/industries/healthcare": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ],
+    [
+      "/industries/healthcare",
+      "Healthcare"
+    ]
+  ],
+  "/industries/financial": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/industries",
+      "Industries"
+    ],
+    [
+      "/industries/financial",
+      "Financial"
+    ]
+  ],
+  "/work": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ]
+  ],
+  "/work/case-studies": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/case-studies",
+      "Case studies"
+    ]
+  ],
+  "/work/case-studies/propertyware-rently-integration": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/case-studies",
+      "Case studies"
+    ],
+    [
+      "/work/case-studies/propertyware-rently-integration",
+      "PropertyWare + Rently"
+    ]
+  ],
+  "/work/case-studies/synthetic-data-testing": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/case-studies",
+      "Case studies"
+    ],
+    [
+      "/work/case-studies/synthetic-data-testing",
+      "Synthetic data"
+    ]
+  ],
+  "/work/case-studies/zillow-reso-platform": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/case-studies",
+      "Case studies"
+    ],
+    [
+      "/work/case-studies/zillow-reso-platform",
+      "Zillow + RESO"
+    ]
+  ],
+  "/work/case-studies/institutional-data-repository": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/case-studies",
+      "Case studies"
+    ],
+    [
+      "/work/case-studies/institutional-data-repository",
+      "Data repository + API"
+    ]
+  ],
+  "/work/case-studies/automated-cma-vacancy-pricing": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/case-studies",
+      "Case studies"
+    ],
+    [
+      "/work/case-studies/automated-cma-vacancy-pricing",
+      "CMA vacancy pricing"
+    ]
+  ],
+  "/work/videos": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/videos",
+      "Videos"
+    ]
+  ],
+  "/work/code": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/code",
+      "Code"
+    ]
+  ],
+  "/work/documents": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/documents",
+      "Documents"
+    ]
+  ],
+  "/markdown-viewer": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/work/documents",
+      "Documents"
+    ],
+    [
+      "/markdown-viewer",
+      "Document viewer"
+    ]
+  ],
+  "/about": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/about",
+      "About"
+    ]
+  ],
+  "/about/approach": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/about",
+      "About"
+    ],
+    [
+      "/about/approach",
+      "Approach"
+    ]
+  ],
+  "/about/skills": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/about",
+      "About"
+    ],
+    [
+      "/about/skills",
+      "Skills"
+    ]
+  ],
+  "/about/resume": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/about",
+      "About"
+    ],
+    [
+      "/about/resume",
+      "Resume"
+    ]
+  ],
+  "/pricing": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/pricing",
+      "Pricing"
+    ]
+  ],
+  "/privacy": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/privacy",
+      "Privacy"
+    ]
+  ],
+  "/terms": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/terms",
+      "Terms"
+    ]
+  ],
+  "/support": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/support",
+      "Support"
+    ]
+  ],
+  "/demo": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/demo",
+      "Demo"
+    ]
+  ],
+  "/request-access": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/request-access",
+      "Request access"
+    ]
+  ],
+  "/claude": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/claude",
+      "Claude"
+    ]
+  ],
+  "/connect": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/connect",
+      "Connect"
+    ]
+  ],
+  "/chatgpt": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/connect",
+      "Connect"
+    ],
+    [
+      "/chatgpt",
+      "ChatGPT"
+    ]
+  ],
+  "/cursor": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/connect",
+      "Connect"
+    ],
+    [
+      "/cursor",
+      "Cursor"
+    ]
+  ],
+  "/vscode": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/connect",
+      "Connect"
+    ],
+    [
+      "/vscode",
+      "VS Code"
+    ]
+  ],
+  "/windsurf": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/connect",
+      "Connect"
+    ],
+    [
+      "/windsurf",
+      "Windsurf"
+    ]
+  ],
+  "/gemini-cli": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/connect",
+      "Connect"
+    ],
+    [
+      "/gemini-cli",
+      "Gemini CLI"
+    ]
+  ],
+  "/codex": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/connect",
+      "Connect"
+    ],
+    [
+      "/codex",
+      "Codex"
+    ]
+  ],
+  "/contact": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/contact",
+      "Contact"
+    ]
+  ],
+  "/chat": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/chat",
+      "Chat"
+    ]
+  ],
+  "/mcp": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/mcp",
+      "MCP"
+    ]
+  ],
+  "/mcp/getting-started": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/mcp",
+      "MCP"
+    ],
+    [
+      "/mcp/getting-started",
+      "Getting started"
+    ]
+  ],
+  "/mcp/connect": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/mcp",
+      "MCP"
+    ],
+    [
+      "/mcp/connect",
+      "How to connect"
+    ]
+  ],
+  "/mcp/explained": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/mcp",
+      "MCP"
+    ],
+    [
+      "/mcp/explained",
+      "Explained"
+    ]
+  ],
+  "/insights": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/insights",
+      "Insights"
+    ]
+  ],
+  "/insights/who-pays-for-the-ai": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/insights",
+      "Insights"
+    ],
+    [
+      "/insights/who-pays-for-the-ai",
+      "Who pays for the AI?"
+    ]
+  ],
+  "/try": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/try",
+      "Try me"
+    ]
+  ],
+  "/try/help": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/try",
+      "Try me"
+    ],
+    [
+      "/try/help",
+      "Help guide"
+    ]
+  ],
+  "/try/connect": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/try",
+      "Try me"
+    ],
+    [
+      "/try/help",
+      "Help guide"
+    ],
+    [
+      "/try/connect",
+      "Connect your MCP client"
+    ]
+  ],
+  "/proposal-architecture": [
+    [
+      "/",
+      "Home"
+    ],
+    [
+      "/work",
+      "Work"
+    ],
+    [
+      "/proposal-architecture",
+      "Proposal Architecture"
+    ]
+  ]
+}

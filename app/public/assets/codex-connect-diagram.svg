@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 970" role="img" aria-labelledby="title desc">
+  <title id="title">Four steps to connect Codex to Unwhelm</title>
+  <desc id="desc">A numbered diagram for connecting Connect Codex to Unwhelm.</desc>
+  <defs>
+    <marker id="step-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#006b75"/>
+    </marker>
+  </defs>
+  <rect width="800" height="970" fill="#fffdf6"/>
+  <text x="400" y="48" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="22" font-weight="700" fill="#0c1116">Connect Codex to Unwhelm</text>
+  <text x="400" y="76" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#3d4a4b">Four steps, from config.toml to mcp login</text>
+  <rect x="48" y="108" width="704" height="162" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="189.0" r="32" fill="#006b75"/>
+  <text x="108" y="199.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">1</text>
+  <text x="168" y="152" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Add a Streamable HTTP server</text>
+  <text x="168" y="188" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">In ~/.codex/config.toml, add a table with the</text>
+  <text x="168" y="214" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Unwhelm URL. You can also use Add server in</text>
+  <text x="168" y="240" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">the ChatGPT desktop app or the IDE extension.</text>
+  <line x1="400" y1="274" x2="400" y2="308" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+  <rect x="48" y="318" width="704" height="162" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="399.0" r="32" fill="#006b75"/>
+  <text x="108" y="409.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">2</text>
+  <text x="168" y="362" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Confirm the URL</text>
+  <text x="168" y="398" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">The required field is url. Auth defaults to</text>
+  <text x="168" y="424" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">oauth for stored MCP OAuth credentials.</text>
+  <text x="168" y="450" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="16" fill="#006b75">https://mcp.unwhelm.net/mcp</text>
+  <line x1="400" y1="484" x2="400" y2="518" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+  <rect x="48" y="528" width="704" height="162" rx="14" fill="#ffffff" stroke="#d7caba" stroke-width="2"/>
+  <circle cx="108" cy="609.0" r="32" fill="#006b75"/>
+  <text x="108" y="619.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">3</text>
+  <text x="168" y="572" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Sign in</text>
+  <text x="168" y="608" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Run codex mcp login unwhelm, or select</text>
+  <text x="168" y="634" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Authenticate in the desktop or IDE server list.</text>
+  <text x="168" y="660" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">Complete the email link and choose Allow.</text>
+  <line x1="400" y1="694" x2="400" y2="728" stroke="#006b75" stroke-width="3" marker-end="url(#step-arrow)"/>
+  <rect x="48" y="738" width="704" height="162" rx="14" fill="#dff2ef" stroke="#006b75" stroke-width="2"/>
+  <circle cx="108" cy="819.0" r="32" fill="#0c1116"/>
+  <text x="108" y="829.0" text-anchor="middle" font-family="Sora, ui-sans-serif, sans-serif" font-size="28" font-weight="700" fill="#fffdf6">4</text>
+  <text x="168" y="782" font-family="Sora, ui-sans-serif, sans-serif" font-size="24" font-weight="700" fill="#0c1116">Use Unwhelm in Codex</text>
+  <text x="168" y="818" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">In the Codex TUI, type /mcp to see connected</text>
+  <text x="168" y="844" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">servers. Then ask Codex to list your proposals</text>
+  <text x="168" y="870" font-family="Arial, sans-serif" font-size="18" fill="#1a2228">or draft a new one.</text>
+  <text x="400" y="938" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#3d4a4b">Anyone can browse the catalog and draft. Saving and submitting need a signed-in account.</text>
+</svg>

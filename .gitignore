@@ -1,0 +1,18 @@
+# Proposal manager app (see app/.gitignore for full list)
+app/node_modules/
+app/dist/
+app/dist-api/
+app/unwh-mcp/dist/
+app/packages/shapes/dist/
+app/.vite/
+app/*.log
+app/.env
+app/.env.*
+!app/.env.example
+app/playwright-report/
+app/test-results/
+app/clips/
+app/videos/
+
+# Local OS
+.DS_Store

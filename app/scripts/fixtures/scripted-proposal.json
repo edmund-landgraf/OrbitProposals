@@ -1,0 +1,22 @@
+{
+  "client": { "email": "scripted-client@unwhelm.test", "displayName": "Scripted Test Client", "organization": "Scripted Test Client Co", "slug": "scripted-test-client", "preset": "client" },
+  "steps": [
+    { "name": "Check the token works", "method": "GET", "path": "/health", "expect": [200] },
+    { "name": "Read the catalog", "method": "GET", "path": "/catalog", "expect": [200] },
+    { "name": "Say how to send reminders", "method": "PUT", "path": "/me/contact-preference", "body": { "channel": "email", "email": "scripted-client@unwhelm.test", "consent": true, "consentSource": "scripted-run", "timezone": "America/Los_Angeles" }, "expect": [200] },
+    { "name": "Start the proposal", "method": "POST", "path": "/proposals", "capture": { "proposalId": "entity.id" }, "expect": [201],
+      "body": { "title": "Scripted run: intake automation", "engagement": "fixed_price", "scope": { "summary": "Automate the client intake form into the CRM.", "deliverables": ["Intake form"] }, "pricing": { "model": "fixed_price", "amountMinor": 300000, "currency": "USD" } } },
+    { "name": "Add deliverables", "method": "PUT", "path": "/proposals/{proposalId}/sections/deliverables", "body": { "value": ["Intake form", "CRM sync", "Weekly summary email"] }, "expect": [200] },
+    { "name": "Add assumptions", "method": "PUT", "path": "/proposals/{proposalId}/sections/assumptions", "body": { "value": ["Client provides CRM API access"] }, "expect": [200] },
+    { "name": "Add exclusions", "method": "PUT", "path": "/proposals/{proposalId}/sections/exclusions", "body": { "value": ["Data migration of old records"] }, "expect": [200] },
+    { "name": "Set target dates", "method": "PUT", "path": "/proposals/{proposalId}/timeline", "body": { "startDate": "2026-11-02", "targetDate": "2026-12-11" }, "expect": [200] },
+    { "name": "Check progress at the start", "method": "GET", "path": "/proposals/{proposalId}/progress", "expect": [200] },
+    { "name": "Let Unwhelm decide the hours", "method": "POST", "path": "/proposals/{proposalId}/completion/nodes/hours/resolve", "body": { "resolution": "staff_decides", "actor": "client" }, "expect": [200] },
+    { "name": "Leave milestones to Unwhelm", "method": "POST", "path": "/proposals/{proposalId}/completion/nodes/milestones/resolve", "body": { "resolution": "staff_decides", "actor": "client" }, "expect": [200] },
+    { "name": "Mark terms as not sure", "method": "POST", "path": "/proposals/{proposalId}/completion/nodes/terms/resolve", "body": { "resolution": "unsure", "note": "Want to talk through payment terms.", "actor": "client" }, "expect": [200] },
+    { "name": "Ask for a reminder in a few days", "method": "PUT", "path": "/proposals/{proposalId}/tickler", "body": { "option": "snooze", "intervalDays": 3 }, "expect": [200] },
+    { "name": "Check progress before sending", "method": "GET", "path": "/proposals/{proposalId}/progress", "expect": [200] },
+    { "name": "Send it for review", "method": "POST", "path": "/proposals/{proposalId}/review", "body": { "notes": "Submitted by the scripted run." }, "expect": [200] },
+    { "name": "Confirm it is in review", "method": "GET", "path": "/proposals/{proposalId}/status", "expect": [200] }
+  ]
+}

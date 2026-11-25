@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#101820"/>
+  <path d="M0 120H1200M0 240H1200M0 360H1200M0 480H1200M200 0V630M400 0V630M600 0V630M800 0V630M1000 0V630" stroke="#29404a" stroke-width="1" opacity=".48"/>
+  <circle cx="960" cy="110" r="240" fill="#087f8c" opacity=".16"/>
+  <rect x="66" y="66" width="1068" height="498" rx="14" fill="none" stroke="#d7caba" stroke-width="2" opacity=".7"/>
+  <text x="105" y="174" fill="#9ee7de" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="5">UNWHELMNET</text>
+  <text x="105" y="300" fill="#fffdf6" font-family="Arial, sans-serif" font-size="68" font-weight="700">Build the system</text>
+  <text x="105" y="380" fill="#fffdf6" font-family="Arial, sans-serif" font-size="68" font-weight="700">between the systems.</text>
+  <text x="105" y="452" fill="#d9e8e4" font-family="Arial, sans-serif" font-size="26">Software • AI • Automation • Cloud Infrastructure</text>
+</svg>

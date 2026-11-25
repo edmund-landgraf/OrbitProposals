@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">UnwhelmNet technical walkthrough</title>
+  <desc id="desc">A branded poster for an UnwhelmNet engineering video.</desc>
+  <rect width="1200" height="675" fill="#101820"/>
+  <path d="M0 120H1200M0 240H1200M0 360H1200M0 480H1200M200 0V675M400 0V675M600 0V675M800 0V675M1000 0V675" stroke="#29404a" stroke-width="1" opacity=".48"/>
+  <circle cx="940" cy="150" r="190" fill="#087f8c" opacity=".18"/>
+  <rect x="78" y="78" width="1044" height="519" rx="12" fill="none" stroke="#d7caba" stroke-width="2" opacity=".75"/>
+  <text x="112" y="170" fill="#9ee7de" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="4">UNWHELMNET / PROOF</text>
+  <text x="112" y="286" fill="#fffdf6" font-family="Arial, sans-serif" font-size="64" font-weight="700">Technical walkthrough</text>
+  <text x="112" y="344" fill="#d9e8e4" font-family="Arial, sans-serif" font-size="28">See the system while it runs.</text>
+  <circle cx="1015" cy="505" r="48" fill="#c75d2c"/>
+  <path d="M1002 480L1040 505L1002 530Z" fill="#fffdf6"/>
+</svg>
